@@ -89,13 +89,13 @@ public class TeleOpTest2 extends LinearOpMode {
         } else if (gamepad2.right_stick_y < -0.2) {
             rotateClaw.setPosition(rotateClaw.getPosition() - 0.1);
         } else if (gamepad2.a) {
-            rotateClaw.setPosition(0);
+            rotateClaw.setPosition(1);
         } else if (gamepad2.b) {
-            rotateClaw.setPosition(0);
+            rotateClaw.setPosition(1);
         } else if (gamepad2.y) {
-            rotateClaw.setPosition(0);
+            rotateClaw.setPosition(1);
         } else if (gamepad2.x) {
-            rotateClaw.setPosition(0.5);
+            rotateClaw.setPosition(0);
         }
     }
 
@@ -156,7 +156,7 @@ public class TeleOpTest2 extends LinearOpMode {
 
     private void automatedOuttake() {
         if (gamepad2.dpad_up) {
-            rotateClaw.setPosition(0);
+            rotateClaw.setPosition(1);
             rightSlide.setTargetPosition(1250);
             leftSlide.setTargetPosition(-1250);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

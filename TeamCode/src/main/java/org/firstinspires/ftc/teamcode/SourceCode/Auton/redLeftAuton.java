@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -25,8 +27,41 @@ public class redLeftAuton extends LinearOpMode {
     int horizRes = 1280;
     int closestPixelX = 0;
 
+    //Define Motors
+    public DcMotorEx leftSlide = null;
+    public DcMotorEx rightSlide = null;
+
+    //Define servos
+    public Servo rightClaw = null;
+    public Servo leftClaw = null;
+    public Servo rotateClaw = null;
+
+    public void liftControl(double power){
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
+    }
     @Override
     public void runOpMode() throws InterruptedException {
+
+        //Define all Slide motors
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+
+        //Define All servos
+        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
+
+        //Set Zero Power Behavior
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Set up encoders
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         spinTake = hardwareMap.get(DcMotorEx.class, "spin");
         spinTake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,29 +92,86 @@ public class redLeftAuton extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .forward(30)
-                .turn(Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(-38,-28,Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(0);
+                    leftClaw.setPosition(1);
+                })
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    spinTake.setPower(0.6);
+                    rotateClaw.setPosition(0);
+                    leftClaw.setPosition(0);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    spinTake.setPower(0);
-                })
-                .waitSeconds((1))
-                .turn(Math.toRadians(-90))
-                .forward(22)
-                .turn(Math.toRadians(-90))
-                .waitSeconds(0.1)
-                .forward(85)
+                .lineToLinearHeading(new Pose2d(-30,-10,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(30,-10,Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    spinTake.setPower(1);
+                    rotateClaw.setPosition(1);
+                    rightSlide.setTargetPosition(1250);
+                    leftSlide.setTargetPosition(-1250);
+                    rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftControl(1);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    spinTake.setPower(0);
+                .splineToLinearHeading(new Pose2d(54,-26,Math.toRadians(0)),Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rightClaw.setPosition(1);
                 })
-                .waitSeconds(3)
+                .waitSeconds(1)
                 .build();
+
+        TrajectorySequence Part2 = drive.trajectorySequenceBuilder(new Pose2d(54,-26,Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(1);
+                    rightSlide.setTargetPosition(0);
+                    leftSlide.setTargetPosition(0);
+                    rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftControl(1);
+                })
+                .lineToLinearHeading(new Pose2d(30,-14,Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rightClaw.setPosition(1);
+                    leftClaw.setPosition(1);
+                })
+                .lineToLinearHeading(new Pose2d(-30,-10,Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(1);
+                    rightSlide.setTargetPosition(420);
+                    leftSlide.setTargetPosition(-420);
+                    rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftControl(1);
+                })
+                .lineToLinearHeading(new Pose2d(-60,-13,Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rightClaw.setPosition(0);
+                })
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(1);
+                })
+                .waitSeconds(0.5)
+                .strafeRight(3.5)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(1);
+                })
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    leftClaw.setPosition(0);
+                })
+                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(1);
+                    rightSlide.setTargetPosition(0);
+                    leftSlide.setTargetPosition(0);
+                    rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftControl(1);
+                    rotateClaw.setPosition(0);
+                })
+                .lineToLinearHeading(new Pose2d(30,-12,Math.toRadians(0)))
+                .build();
+
 
         TrajectorySequence Right = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
                 .forward(30)
