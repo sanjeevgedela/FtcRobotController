@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
-public class rightAuton extends LinearOpMode {
+public class redLeftAuton extends LinearOpMode {
 
     OpenCvCamera webcam;
     DcMotorEx spinTake;

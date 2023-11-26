@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.SourceCode.EncoderAuton.Objects.EncoderMecanum;
 
-@Autonomous(name = "BlueLeft")
+@Autonomous(name = "BlueLeftParkENC", group = "Encoder")
 public class BlueLeft extends LinearOpMode {
 
     EncoderMecanum drive = new EncoderMecanum();
