@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,6 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
+@Autonomous(name = "HELP", group = "FRFR")
 public class redLeftAuton extends LinearOpMode {
 
     OpenCvCamera webcam;
@@ -44,13 +46,13 @@ public class redLeftAuton extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //Define all Slide motors
-        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
-        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        //leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        //rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
         //Define All servos
-        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
-        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
-        rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
+        //rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        //leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        //rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Zero Power Behavior
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -246,23 +248,24 @@ public class redLeftAuton extends LinearOpMode {
 
         closestPixelX = Please.closestPixel();
 
-        if (closestPixelX < ((1/3) * horizRes)){
-            drive.followTrajectorySequence(Left);
-            sleep(30000000);
+        //if (closestPixelX < ((1/3) * horizRes)){
+        //    drive.followTrajectorySequence(Left);
+        //    sleep(30000000);
 
-        } else if (closestPixelX < ((2/3) * horizRes)){
-            drive.followTrajectorySequence(Forward);
-            sleep(30000000);
+        //} else if (closestPixelX < ((2/3) * horizRes)){
+        //    drive.followTrajectorySequence(Forward);
+        //    sleep(30000000);
 
-        } else if (closestPixelX > ((2/3) * horizRes)){
-            drive.followTrajectorySequence(Right);
-            sleep(30000000);
+        //} else if (closestPixelX > ((2/3) * horizRes)){
+        //    drive.followTrajectorySequence(Right);
+        //    sleep(30000000);
 
-        } else {
-            drive.followTrajectorySequence(NoDetection);
-            sleep(30000000);
+        //} else {
+        //    drive.followTrajectorySequence(NoDetection);
+        //    sleep(30000000);
 
-        }
+        //}
+        drive.followTrajectorySequence(Left);
     }
 }
 class closestPixel extends LinearOpMode {

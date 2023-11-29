@@ -69,6 +69,9 @@ public class TeleOpTest2 extends LinearOpMode {
             rightFront.setPower(ratio * rf * 0.5);
             rightBack.setPower(ratio * rb * 0.5);
         }
+
+        if (gamepad1.left_stick_button){
+        }
     }
 
     public void clawControl() {
@@ -194,13 +197,13 @@ public class TeleOpTest2 extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         //Define all Slide motors
-        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
-        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        //leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        //rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
         //Define All servos
-        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
-        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
-        rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
+        //rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        //leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        //rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Zero Power Behavior
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
