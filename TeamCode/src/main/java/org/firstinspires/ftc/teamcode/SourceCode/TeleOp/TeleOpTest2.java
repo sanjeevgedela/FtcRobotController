@@ -28,8 +28,6 @@ public class TeleOpTest2 extends LinearOpMode {
     public Servo leftClaw = null;
     public Servo rotateClaw = null;
 
-    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
     double movement;
     double rotation;
     double strafe;
@@ -117,22 +115,21 @@ public class TeleOpTest2 extends LinearOpMode {
 
     //    //Lifts the lift
     private void cascadinglift() {
-//        if(Lift1.getCurrentPosition() = 0 && Lift2.getCurrentPosition() = 0.0) {
         if (gamepad2.a) {
-            rightSlide.setTargetPosition(1250);
-            leftSlide.setTargetPosition(-1250);
+            rightSlide.setTargetPosition(220);
+            leftSlide.setTargetPosition(220);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.b) {
-            rightSlide.setTargetPosition(2068);
-            leftSlide.setTargetPosition(-2068);
+            rightSlide.setTargetPosition(440);
+            leftSlide.setTargetPosition(440);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.y) {
-            rightSlide.setTargetPosition(2852);
-            leftSlide.setTargetPosition(-2852);
+            rightSlide.setTargetPosition(720);
+            leftSlide.setTargetPosition(720);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
@@ -143,13 +140,13 @@ public class TeleOpTest2 extends LinearOpMode {
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.left_stick_y > 0.2) {
-            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() + 50);
+            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() - 50);
             leftSlide.setTargetPosition(leftSlide.getCurrentPosition() - 50);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(.5);
         } else if (gamepad2.left_stick_y < -0.2) {
-            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() - 50);
+            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() + 50);
             leftSlide.setTargetPosition(leftSlide.getCurrentPosition() + 50);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -174,21 +171,13 @@ public class TeleOpTest2 extends LinearOpMode {
         }
     }
 
-    //Create turn sequence
-    TrajectorySequence turn = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-            .turn(Math.toRadians(190))
-            .waitSeconds(1)
-            .build();
-
-    private void turn180() {
-        if (gamepad1.y) {
-            drive.followTrajectorySequence(turn);
-        }
-    }
 
 
     @Override
     public void runOpMode () {
+        //Create Mecanum Drive
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
 
         //Define all movement motors
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -197,13 +186,13 @@ public class TeleOpTest2 extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         //Define all Slide motors
-        //leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
-        //rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
         //Define All servos
-        //rightClaw = hardwareMap.get(Servo.class, "rightClaw");
-        //leftClaw = hardwareMap.get(Servo.class, "leftClaw");
-        //rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
+        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Zero Power Behavior
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -216,6 +205,7 @@ public class TeleOpTest2 extends LinearOpMode {
         //Reverse motors
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set up encoders
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -232,6 +222,13 @@ public class TeleOpTest2 extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Create turn sequence
+        TrajectorySequence turn = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
+                .turn(Math.toRadians(190))
+                .waitSeconds(1)
+                .build();
+
+
         waitForStart();
         sleep(100);
         if (opModeIsActive()) {
@@ -241,7 +238,12 @@ public class TeleOpTest2 extends LinearOpMode {
                 resetLift();
                 clawControl();
                 rotateControl();
-                turn180();
+                automatedOuttake();
+
+                if (gamepad1.y) {
+                    drive.followTrajectorySequence(turn);
+                }
+
             }
         }
     }
