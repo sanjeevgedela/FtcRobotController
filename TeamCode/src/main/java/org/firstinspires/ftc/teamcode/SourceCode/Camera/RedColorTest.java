@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @TeleOp (name = "RedColorTest", group = "CameraTests")
-public class BlueColorTest extends LinearOpMode {
+public class RedColorTest extends LinearOpMode {
 
     public OpenCvCamera webcam;
 
@@ -27,7 +27,7 @@ public class BlueColorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        BlueRightPipe scanner = new BlueRightPipe(telemetry);
+        RedPipeline scanner = new RedPipeline(telemetry);
         webcam.setPipeline(scanner);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -51,7 +51,7 @@ public class BlueColorTest extends LinearOpMode {
         }
     }
 }
-class BlueRightPipe extends OpenCvPipeline {
+class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     int correctlocation = 3;
     Mat mat = new Mat();
@@ -68,7 +68,7 @@ class BlueRightPipe extends OpenCvPipeline {
             new Point(480, 180),
             new Point(640, 260));
     static final double PERCENT_COLOR_THRESHOLD = 0.05;
-    public BlueRightPipe(Telemetry t) {telemetry = t;}
+    public RedPipeline(Telemetry t) {telemetry = t;}
 
     @Override
     public Mat processFrame(Mat input) {

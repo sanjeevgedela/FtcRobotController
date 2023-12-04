@@ -11,7 +11,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BlueRightPipe extends OpenCvPipeline {
+public class TestPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     int correctlocation = 3;
     Mat mat = new Mat();
@@ -28,7 +28,7 @@ public class BlueRightPipe extends OpenCvPipeline {
             new Point(80, 70),
             new Point(120, 95));
     static final double PERCENT_COLOR_THRESHOLD = 0.2;
-    public BlueRightPipe(Telemetry t) {telemetry = t;}
+    public TestPipeline(Telemetry t) {telemetry = t;}
 
     @Override
     public Mat processFrame(Mat input) {
