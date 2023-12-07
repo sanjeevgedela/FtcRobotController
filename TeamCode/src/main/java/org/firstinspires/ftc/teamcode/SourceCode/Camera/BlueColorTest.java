@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
+package org.firstinspires.ftc.teamcode.SourceCode.Camera;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -72,8 +72,8 @@ class BlueRightPipe extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,mat,Imgproc.COLOR_RGB2HSV);
-        Scalar lowHSV = new Scalar(0,100,85);
-        Scalar highHSV = new Scalar(10,255,255);
+        Scalar lowHSV = new Scalar(208, 91, 60);
+        Scalar highHSV = new Scalar(254, 100, 100);
 
         Core.inRange(mat,lowHSV,highHSV,mat);
 
@@ -92,25 +92,24 @@ class BlueRightPipe extends OpenCvPipeline {
         telemetry.addData("Middle percentage", Math.round(middleValue * 100) + "%");
 
 
-        boolean onRight = rightValue >PERCENT_COLOR_THRESHOLD;
-        boolean onMiddle = middleValue>PERCENT_COLOR_THRESHOLD;
+        boolean onRight = rightValue > PERCENT_COLOR_THRESHOLD;
+        boolean onMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
 
-        if (onMiddle){
+        if (onMiddle) {
             correctlocation = 2;
             telemetry.addData("LOCATION!:","MIDDLE");
         }
-        else if (onRight){
+        else if (onRight) {
             correctlocation = 1;
             telemetry.addData("LOCATION!:","RIGHT");
         }
-        else{
+        else {
             correctlocation = 3;
             telemetry.addData("LOCATION!:","LEFT");
         }
         telemetry.update();
-        Scalar False = new Scalar(0,100,85
-        );
-        Scalar True = new Scalar(10,255,255);
+        Scalar False = new Scalar(208, 91, 60);
+        Scalar True = new Scalar(254, 100, 100);
 
 
         Imgproc.cvtColor(mat,mat,Imgproc.COLOR_GRAY2RGB);

@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @TeleOp(name="TeleOpTest2")
 public class TeleOpTest2 extends LinearOpMode {
 
-    public static double DRAWING_TARGET_RADIUS = 2;
-
     //Define motors
     public DcMotorEx leftFront = null;
     public DcMotorEx rightFront = null;
@@ -37,8 +35,6 @@ public class TeleOpTest2 extends LinearOpMode {
 
 
     public void driverControl() {
-
-        SampleMecanumDrive robot = new SampleMecanumDrive(hardwareMap);
 
         movement = gamepad1.left_stick_y;
         rotation = gamepad1.right_stick_x;
