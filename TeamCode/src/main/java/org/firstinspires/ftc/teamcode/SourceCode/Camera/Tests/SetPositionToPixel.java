@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera;
+package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 

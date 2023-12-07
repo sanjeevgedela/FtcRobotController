@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera;
+package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,17 +17,16 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp (name = "RedColorTest", group = "CameraTests")
-public class RedColorTest extends LinearOpMode {
+@TeleOp (name = "BlueColorTest", group = "CameraTests")
+public class BlueColorTest extends LinearOpMode {
 
     public OpenCvCamera webcam;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        RedPipeline scanner = new RedPipeline(telemetry);
+        BlueRightPipe scanner = new BlueRightPipe(telemetry);
         webcam.setPipeline(scanner);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -51,7 +50,7 @@ public class RedColorTest extends LinearOpMode {
         }
     }
 }
-class RedPipeline extends OpenCvPipeline {
+class BlueRightPipe extends OpenCvPipeline {
     Telemetry telemetry;
     int correctlocation = 3;
     Mat mat = new Mat();
@@ -68,7 +67,7 @@ class RedPipeline extends OpenCvPipeline {
             new Point(480, 180),
             new Point(640, 260));
     static final double PERCENT_COLOR_THRESHOLD = 0.05;
-    public RedPipeline(Telemetry t) {telemetry = t;}
+    public BlueRightPipe(Telemetry t) {telemetry = t;}
 
     @Override
     public Mat processFrame(Mat input) {

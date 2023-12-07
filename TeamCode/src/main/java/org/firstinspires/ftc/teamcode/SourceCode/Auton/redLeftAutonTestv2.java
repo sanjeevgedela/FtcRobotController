@@ -38,7 +38,7 @@ public class redLeftAutonTestv2 extends LinearOpMode {
 
                 .lineToLinearHeading(new Pose2d(-30,-10,Math.toRadians(180)))
 
-                .turn(180)
+                .turn(Math.toRadians(180))
 
                 .forward(60)
 

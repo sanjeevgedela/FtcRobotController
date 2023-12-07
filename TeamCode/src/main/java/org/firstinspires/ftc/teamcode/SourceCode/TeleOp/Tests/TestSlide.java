@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.TeleOp;
+package org.firstinspires.ftc.teamcode.SourceCode.TeleOp.Tests;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@TeleOp(name="TeleOpSlide")
-public class TeleOp1Slide extends LinearOpMode {
+@TeleOp(name="Slide", group = "tests")
+public class TestSlide extends LinearOpMode {
 
     public DcMotorEx leftSlide = null;
     public DcMotorEx rightSlide = null;
@@ -22,54 +22,60 @@ public class TeleOp1Slide extends LinearOpMode {
     //controls lift motors
     private void liftControl(double power) {
         rightSlide.setPower(power);
-        //leftSlide.setPower(power);
+         leftSlide.setPower(power);
     }
 
     private void resetLift() {
         if (gamepad1.x) {
             rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
 
     //    //Lifts the lift
     private void cascadinglift() {
-//        if(Lift1.getCurrentPosition() = 0 && Lift2.getCurrentPosition() = 0.0) {
+        int rightSlideTarget = rightSlide.getCurrentPosition() - 50;
+        int leftSlideTarget = leftSlide.getCurrentPosition() - 50;
+
+        if(rightSlideTarget > 660){
+            rightSlideTarget = 660;
+        }
+        if (leftSlideTarget > 660){
+            leftSlideTarget = 660;
+        }
+
         if (gamepad2.a) {
             rightSlide.setTargetPosition(220);
-            //leftSlide.setTargetPosition(-1250);
+            leftSlide.setTargetPosition(220);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.b) {
             rightSlide.setTargetPosition(440);
-            //leftSlide.setTargetPosition(-2068);
+            leftSlide.setTargetPosition(440);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.y) {
             rightSlide.setTargetPosition(720);
-            //leftSlide.setTargetPosition(-2852);
+            leftSlide.setTargetPosition(720);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
         } else if (gamepad2.x) {
-            rightSlide.setTargetPosition(0);
-            //leftSlide.setTargetPosition(0);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } else if (gamepad2.left_stick_y > 0.2) {
-            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() - 50);
-            //leftSlide.setTargetPosition(leftSlide.getCurrentPosition() - 50);
+            rightSlide.setTargetPosition(rightSlideTarget);
+            leftSlide.setTargetPosition(leftSlideTarget);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(.5);
         } else if (gamepad2.left_stick_y < -0.2) {
             rightSlide.setTargetPosition(rightSlide.getCurrentPosition() + 50);
-            //leftSlide.setTargetPosition(leftSlide.getCurrentPosition() + 50);
+            leftSlide.setTargetPosition(leftSlide.getCurrentPosition() + 50);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(.5);
         }
     }
@@ -79,21 +85,21 @@ public class TeleOp1Slide extends LinearOpMode {
     public void runOpMode () {
 
         //Define all Slide motors
-        //leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
 
         //Set Zero Power Behavior
-        //leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();

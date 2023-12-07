@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -63,8 +64,9 @@ public class redLeftTESTONLY extends LinearOpMode {
                 .build();
 
         waitForStart();
-        sleep(1000);
 
         drive.followTrajectorySequence(Left);
+        sleep(10000);
+        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }

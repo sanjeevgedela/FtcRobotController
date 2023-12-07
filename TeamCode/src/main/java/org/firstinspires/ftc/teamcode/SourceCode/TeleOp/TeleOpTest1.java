@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleOpTest1")
+//@TeleOp(name="TeleOpTest1")
 public class TeleOpTest1 extends LinearOpMode {
 
     //Define motors
