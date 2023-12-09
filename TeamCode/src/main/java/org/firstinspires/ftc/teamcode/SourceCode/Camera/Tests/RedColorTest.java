@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera;
+package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,16 +17,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp (name = "BlueColorTest", group = "CameraTests")
-public class BlueColorTest extends LinearOpMode {
+@TeleOp (name = "RedColorTest", group = "CameraTests")
+public class RedColorTest extends LinearOpMode {
 
     public OpenCvCamera webcam;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        BlueRightPipe scanner = new BlueRightPipe(telemetry);
+        RedPipeline scanner = new RedPipeline(telemetry);
         webcam.setPipeline(scanner);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -34,7 +35,7 @@ public class BlueColorTest extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -50,7 +51,7 @@ public class BlueColorTest extends LinearOpMode {
         }
     }
 }
-class BlueRightPipe extends OpenCvPipeline {
+class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     int correctlocation = 3;
     Mat mat = new Mat();
@@ -61,19 +62,19 @@ class BlueRightPipe extends OpenCvPipeline {
     }
     private Location location;
     static final Rect BMiddle = new Rect(
-            new Point(120, 170),
-            new Point(450, 220));
+            new Point(145, 270),
+            new Point(345, 200));
     static final Rect BRight = new Rect(
-            new Point(480, 180),
-            new Point(640, 260));
-    static final double PERCENT_COLOR_THRESHOLD = 0.05;
-    public BlueRightPipe(Telemetry t) {telemetry = t;}
+            new Point(450, 240),
+            new Point(580, 370));
+    static final double PERCENT_COLOR_THRESHOLD = 0.15;
+    public RedPipeline(Telemetry t) {telemetry = t;}
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,mat,Imgproc.COLOR_RGB2HSV);
-        Scalar lowHSV = new Scalar(208, 91, 60);
-        Scalar highHSV = new Scalar(254, 100, 100);
+        Scalar lowHSV = new Scalar(0,100,85);
+        Scalar highHSV = new Scalar(10,255,255);
 
         Core.inRange(mat,lowHSV,highHSV,mat);
 
@@ -92,24 +93,25 @@ class BlueRightPipe extends OpenCvPipeline {
         telemetry.addData("Middle percentage", Math.round(middleValue * 100) + "%");
 
 
-        boolean onRight = rightValue > PERCENT_COLOR_THRESHOLD;
-        boolean onMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
+        boolean onRight = rightValue >PERCENT_COLOR_THRESHOLD;
+        boolean onMiddle = middleValue>PERCENT_COLOR_THRESHOLD;
 
-        if (onMiddle) {
+        if (onMiddle){
             correctlocation = 2;
             telemetry.addData("LOCATION!:","MIDDLE");
         }
-        else if (onRight) {
+        else if (onRight){
             correctlocation = 1;
             telemetry.addData("LOCATION!:","RIGHT");
         }
-        else {
+        else{
             correctlocation = 3;
             telemetry.addData("LOCATION!:","LEFT");
         }
         telemetry.update();
-        Scalar False = new Scalar(208, 91, 60);
-        Scalar True = new Scalar(254, 100, 100);
+        Scalar False = new Scalar(0,100,85
+        );
+        Scalar True = new Scalar(10,255,255);
 
 
         Imgproc.cvtColor(mat,mat,Imgproc.COLOR_GRAY2RGB);

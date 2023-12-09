@@ -23,8 +23,8 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name = "RedRight")
-public class redRight extends LinearOpMode {
+@Autonomous(name = "RedRightStack")
+public class redRightStack extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftSlide;
@@ -80,7 +80,7 @@ public class redRight extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RedPipe0 pipeline = new RedPipe0();
+        RedPipe5 pipeline = new RedPipe5();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -207,13 +207,33 @@ public class redRight extends LinearOpMode {
 
         TrajectorySequence stage2 = drive.trajectorySequenceBuilder(stage2start)
                 .lineToLinearHeading(new Pose2d(20, -10, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    slideMovement(1,60);
+                    clawControl(1,1);
+                })
                 .lineToLinearHeading(new Pose2d(-58.4, -10, Math.toRadians(-180)))
-                .waitSeconds(5)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    slideMovement(1,60);
+                    clawControl(0,0);
+                })
+                .waitSeconds(2)
                 .build();
 
         TrajectorySequence stage3 = drive.trajectorySequenceBuilder(new Pose2d(-58.4, -12, Math.toRadians(-180)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
                 .lineToLinearHeading(new Pose2d(20, -10, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    scorePositionLow();
+                })
                 .splineTo(new Vector2d(50, -35.2), 0)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(1,1);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                    reset();
+                })
                 .waitSeconds(3)
                 .build();
 
@@ -227,29 +247,34 @@ public class redRight extends LinearOpMode {
 
         String location = pipeline.getLocation();
 
-        while (opModeIsActive()) {
             if (location == "RIGHT") {
                 parkStrafe = 15;
                 stage2start = new Pose2d(50.4, -43.2, Math.toRadians(0));
                 drive.followTrajectorySequence(right);
+                drive.followTrajectorySequence(stage2);
+                drive.followTrajectorySequence(stage3);
                 drive.followTrajectorySequence(park);
                 sleep(30000000);
             } else if (location == "MIDDLE") {
                 parkStrafe = 20;
                 stage2start = new Pose2d(50, -35.2, Math.toRadians(0));
                 drive.followTrajectorySequence(middle);
+                drive.followTrajectorySequence(stage2);
+                drive.followTrajectorySequence(stage3);
                 drive.followTrajectorySequence(park);
                 sleep(30000000);
             } else if (location == "LEFT")
                 parkStrafe = 25;
-                stage2start = new Pose2d(50.4, -29.2, Math.toRadians(0));
-                drive.followTrajectorySequence(left);
-                drive.followTrajectorySequence(park);
-                sleep(30000000);
-        }
+            stage2start = new Pose2d(50.4, -29.2, Math.toRadians(0));
+            drive.followTrajectorySequence(left);
+            drive.followTrajectorySequence(stage2);
+            drive.followTrajectorySequence(stage3);
+            drive.followTrajectorySequence(park);
+            sleep(30000000);
+
     }
 }
-class RedPipe0 extends OpenCvPipeline {
+class RedPipe5 extends OpenCvPipeline {
     int correctlocation = 3;
     Mat mat = new Mat();
 

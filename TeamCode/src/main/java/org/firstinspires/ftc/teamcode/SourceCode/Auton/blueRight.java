@@ -23,8 +23,8 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name = "RedRight")
-public class redRight extends LinearOpMode {
+@Autonomous(name = "blueLeft")
+public class blueRight extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftSlide;
@@ -80,7 +80,7 @@ public class redRight extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RedPipe0 pipeline = new RedPipe0();
+        RedPipe7 pipeline = new RedPipe7();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -111,17 +111,17 @@ public class redRight extends LinearOpMode {
 
         double parkStrafe = 25;
 
-        Pose2d startPose = new Pose2d(6.4, -62.4, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(13.4, 62.4, Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(6.4, -62.4, Math.toRadians(90)))
+        TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     slideMovement(1,40);
                     rotateControl(0);
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(33.2, -30.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(33.2, 30.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0,1);
                 })
@@ -133,7 +133,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -43.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4, 43.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1,0);
@@ -145,13 +145,13 @@ public class redRight extends LinearOpMode {
                 .waitSeconds(1)
                 .build();
 
-        TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(6.4, -62.4, Math.toRadians(90)))
+        TrajectorySequence middle = drive.trajectorySequenceBuilder(startPose)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     slideMovement(1,40);
                     rotateControl(0);
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(12.2, -33.6, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(12.2, 33.6, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0,1);
                 })
@@ -163,7 +163,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50, -35.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50, 35.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1,0);
@@ -175,13 +175,13 @@ public class redRight extends LinearOpMode {
                 .waitSeconds(1)
                 .build();
 
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(6.4, -62.4, Math.toRadians(90)))
+        TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     slideMovement(1,40);
                     rotateControl(0);
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(10.4, -30.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(10.4, 30.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0,1);
                 })
@@ -193,7 +193,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -29.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4, 29.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1,0);
@@ -218,7 +218,7 @@ public class redRight extends LinearOpMode {
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
-                .strafeRight(parkStrafe)
+                .strafeLeft(parkStrafe)
                 .forward(10)
                 .build();
 
@@ -242,14 +242,14 @@ public class redRight extends LinearOpMode {
                 sleep(30000000);
             } else if (location == "LEFT")
                 parkStrafe = 25;
-                stage2start = new Pose2d(50.4, -29.2, Math.toRadians(0));
-                drive.followTrajectorySequence(left);
-                drive.followTrajectorySequence(park);
-                sleep(30000000);
+            stage2start = new Pose2d(50.4, -29.2, Math.toRadians(0));
+            drive.followTrajectorySequence(left);
+            drive.followTrajectorySequence(park);
+            sleep(30000000);
         }
     }
 }
-class RedPipe0 extends OpenCvPipeline {
+class RedPipe7 extends OpenCvPipeline {
     int correctlocation = 3;
     Mat mat = new Mat();
 

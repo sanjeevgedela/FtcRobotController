@@ -1,11 +1,9 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Auton;
+package org.firstinspires.ftc.teamcode.SourceCode.Auton.OLD;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
-@Autonomous(name = "HELP", group = "FRFR")
+//@Autonomous(name = "HELP", group = "FRFR")
 public class redLeftAuton extends LinearOpMode {
 
     OpenCvCamera webcam;

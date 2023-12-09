@@ -4,6 +4,10 @@ import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.commands.TeleOp.driverControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -11,8 +15,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @TeleOp(name = "AlignBlue", group = "tests")
 public class TeleOpAlignment extends LinearOpMode {
 
+    Gamepad x = new Gamepad();
+
     //Should setup driving
-    private driverControl driver = new driverControl();
 
     //Setting up all points that will be used
     Pose2d blueBackDrop = new Pose2d(62,36,Math.toRadians(0));
@@ -40,6 +45,44 @@ public class TeleOpAlignment extends LinearOpMode {
     //Start settings as placeholder for the enum
     private Side side = Side.RED;
     private driveType mode = driveType.NORMAL;
+    public DcMotorEx leftFront = null;
+    public DcMotorEx rightFront = null;
+    public DcMotorEx leftBack = null;
+    public DcMotorEx rightBack = null;
+
+    double movement;
+    double rotation;
+    double strafe;
+
+    public void driverControl() {
+        movement = gamepad1.left_stick_y;
+        rotation = gamepad1.right_stick_x;
+        strafe = gamepad1.left_stick_x;
+
+        double magnitude = Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(gamepad1.left_stick_y, 2));
+        double direction = Math.atan2(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        boolean precision = gamepad1.right_bumper;
+
+        //INFO Increasing speed to a maximum of 1
+        double lf = magnitude * Math.sin(direction + Math.PI / 4) + rotation;
+        double lb = magnitude * Math.cos(direction + Math.PI / 4) + rotation;
+        double rf = magnitude * Math.cos(direction + Math.PI / 4) - rotation;
+        double rb = magnitude * Math.sin(direction + Math.PI / 4) - rotation;
+
+        double hypot = Math.hypot(movement, strafe);
+        double ratio;
+        if (movement == 0 && strafe == 0)
+            ratio = 1;
+        else if (precision)
+            ratio = hypot / (Math.max(Math.max(Math.max(Math.abs(lf), Math.abs(lb)), Math.abs(rb)), Math.abs(rf))) / 2;
+        else
+            ratio = hypot / (Math.max(Math.max(Math.max(Math.abs(lf), Math.abs(lb)), Math.abs(rb)), Math.abs(rf)));
+
+        leftFront.setPower(ratio * lf);
+        leftBack.setPower(ratio * lb);
+        rightFront.setPower(ratio * rf);
+        rightBack.setPower(ratio * rb);
+    }
 
     //Calculates distance and direction from the blue scoring backdrop
     public void BlueAlignOut() {
@@ -59,8 +102,33 @@ public class TeleOpAlignment extends LinearOpMode {
         SampleMecanumDrive drive= new SampleMecanumDrive(hardwareMap);
 
         //Set up mecanum
-        driver.driverMap(hardwareMap);
-        driver.initialize();
+
+        rightFront = hardwareMap.get(DcMotorEx.class,"rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class,"leftFront");
+        rightBack = hardwareMap.get(DcMotorEx.class,"rightRear");
+        leftBack = hardwareMap.get(DcMotorEx.class,"leftRear");
+
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Retrieve our pose from the PoseStorage.currentPose static field
         drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
@@ -95,13 +163,13 @@ public class TeleOpAlignment extends LinearOpMode {
                     if (gamepad1.a){
                         mode = driveType.ALIGN;
                     }
-                    driver.driverControl();
+                    driverControl();
                     break;
                 case ALIGN:
                     if (gamepad1.b){
                         mode = driveType.NORMAL;
                     }
-                    driver.driverControl();
+                    driverControl();
                     headingController.setTargetPosition(direction);
                     break;
             }

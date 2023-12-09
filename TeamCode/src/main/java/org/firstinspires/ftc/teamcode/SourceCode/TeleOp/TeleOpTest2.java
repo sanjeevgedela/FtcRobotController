@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@TeleOp(name="TeleOpTest2")
+@TeleOp(name="OFFICIAL")
 public class TeleOpTest2 extends LinearOpMode {
 
     //Define motors
@@ -27,12 +27,11 @@ public class TeleOpTest2 extends LinearOpMode {
     public Servo rightClaw = null;
     public Servo leftClaw = null;
     public Servo rotateClaw = null;
+    public Servo plane = null;
 
     double movement;
     double rotation;
     double strafe;
-
-
 
     public void driverControl() {
 
@@ -80,21 +79,10 @@ public class TeleOpTest2 extends LinearOpMode {
     }
 
     public void rotateControl() {
-        if (gamepad2.right_stick_y < 0.2) {
-            rotateClaw.setPosition(rotateClaw.getPosition() + 0.1);
-        } else if (gamepad2.right_stick_y > -0.2) {
-            rotateClaw.setPosition(rotateClaw.getPosition() - 0.1);
-        } else if (gamepad2.right_bumper){
+        if (gamepad2.dpad_down){
             rotateClaw.setPosition(0);
-        } else if (gamepad2.left_bumper){
-            rotateClaw.setPosition(1);
-        }else if (gamepad2.a) {
-            rotateClaw.setPosition(1);
-        } else if (gamepad2.b) {
-            rotateClaw.setPosition(1);
-        } else if (gamepad2.y) {
-            rotateClaw.setPosition(1);
-        } else if (gamepad2.x) {
+        }
+        if (gamepad1.dpad_up){
             rotateClaw.setPosition(1);
         }
     }
@@ -125,46 +113,56 @@ public class TeleOpTest2 extends LinearOpMode {
             leftSlideTarget = 660;
         }
 
-        if (gamepad2.a) {
+        if (gamepad2.y) {
             rightSlide.setTargetPosition(220);
             leftSlide.setTargetPosition(220);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
+            rotateClaw.setPosition(1);
+
         } else if (gamepad2.b) {
             rightSlide.setTargetPosition(440);
             leftSlide.setTargetPosition(440);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
-        } else if (gamepad2.y) {
+            rotateClaw.setPosition(1);
+
+        } else if (gamepad2.a) {
             rightSlide.setTargetPosition(720);
             leftSlide.setTargetPosition(720);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
+            rotateClaw.setPosition(1);
+
         } else if (gamepad2.x) {
             rightSlide.setTargetPosition(0);
             leftSlide.setTargetPosition(0);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(1);
+            rotateClaw.setPosition(1);
+
         } else if (gamepad2.left_stick_y > 0.2) {
             rightSlide.setTargetPosition(rightSlideTarget);
             leftSlide.setTargetPosition(leftSlideTarget);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(.5);
+
         } else if (gamepad2.left_stick_y < -0.2) {
             rightSlide.setTargetPosition(rightSlide.getCurrentPosition() + 50);
             leftSlide.setTargetPosition(leftSlide.getCurrentPosition() + 50);
             rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftControl(.5);
+
         }
     }
     private void automatedOuttake() {
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_left) {
             rotateClaw.setPosition(1);
             rightSlide.setTargetPosition(660);
             leftSlide.setTargetPosition(660);
@@ -185,7 +183,11 @@ public class TeleOpTest2 extends LinearOpMode {
         }
     }
 
-
+    public void planeControl(){
+        if(gamepad2.left_bumper){
+            plane.setPosition(0.3);
+        }
+    }
 
     @Override
     public void runOpMode () {
@@ -207,6 +209,8 @@ public class TeleOpTest2 extends LinearOpMode {
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
+        plane = hardwareMap.get(Servo.class, "plane");
+
 
         //Set Zero Power Behavior
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -220,6 +224,7 @@ public class TeleOpTest2 extends LinearOpMode {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        plane.setDirection(Servo.Direction.FORWARD);
 
         //Set up encoders
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -241,11 +246,6 @@ public class TeleOpTest2 extends LinearOpMode {
         leftClaw.scaleRange(0,0.6);
         rotateClaw.scaleRange(0.65,1);
 
-        //Create turn sequence
-        TrajectorySequence turn = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .turn(Math.toRadians(190))
-                .build();
-
         drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
@@ -259,9 +259,10 @@ public class TeleOpTest2 extends LinearOpMode {
                 rotateControl();
                 automatedOuttake();
                 telemetry.update();
+                planeControl();
 
                 if (gamepad1.y) {
-                    drive.followTrajectorySequence(turn);
+                    drive.turn(Math.toRadians(180));
                 }
             }
         }

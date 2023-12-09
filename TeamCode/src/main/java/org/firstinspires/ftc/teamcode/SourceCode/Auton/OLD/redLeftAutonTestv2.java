@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Auton;
+package org.firstinspires.ftc.teamcode.SourceCode.Auton.OLD;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
-@Autonomous(name = "redLeftAutonTestv2", group = "FRFR")
+//@Autonomous(name = "redLeftAutonTestv2", group = "FRFR")
 public class redLeftAutonTestv2 extends LinearOpMode {
 
     @Override
