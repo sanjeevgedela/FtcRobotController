@@ -30,8 +30,6 @@ public class blueRight extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
 
-    Pose2d stage2start = new Pose2d(-41.2, -46.8, Math.toRadians(-90));
-
     //Define servos
     public Servo rightClaw;
     public Servo leftClaw;
@@ -80,6 +78,8 @@ public class blueRight extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Pose2d stage2start = new Pose2d(-41.2, -46.8, Math.toRadians(-90));
+
         RedPipe7 pipeline = new RedPipe7();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
