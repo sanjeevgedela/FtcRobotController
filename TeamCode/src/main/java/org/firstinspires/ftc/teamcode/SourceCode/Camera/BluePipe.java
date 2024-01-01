@@ -34,7 +34,7 @@ public class BluePipe extends OpenCvPipeline {
     }
 
     public void initialize(){
-        RedPipe scanner = new RedPipe(telemetry);
+        BluePipe scanner = new BluePipe(telemetry);
         webcam.setPipeline(scanner);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

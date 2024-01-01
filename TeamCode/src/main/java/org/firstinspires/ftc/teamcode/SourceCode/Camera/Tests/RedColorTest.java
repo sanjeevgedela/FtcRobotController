@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -29,6 +30,7 @@ public class RedColorTest extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         RedPipeline scanner = new RedPipeline(telemetry);
         webcam.setPipeline(scanner);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -48,7 +50,12 @@ public class RedColorTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
+            drive.turn(90);
+            sleep(1000);
+            drive.turn(90);
+            sleep(1000);
         }
+
     }
 }
 class RedPipeline extends OpenCvPipeline {

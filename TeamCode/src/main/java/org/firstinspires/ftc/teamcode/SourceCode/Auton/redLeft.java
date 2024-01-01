@@ -360,7 +360,6 @@ class RedPipe1 extends OpenCvPipeline {
         return mat;
     }
     public String getLocation() {
-        processFrame(mat);
         if(correctlocation == 1){
             return "RIGHT";
         } else if (correctlocation == 2) {

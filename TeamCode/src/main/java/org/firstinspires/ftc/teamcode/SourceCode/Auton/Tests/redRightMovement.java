@@ -31,6 +31,7 @@ public class redRightMovement extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         RedPipe2 pipeline = new RedPipe2();
+        Mat next = new Mat();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -55,7 +56,7 @@ public class redRightMovement extends LinearOpMode {
         Pose2d startPose = new Pose2d(6.4, -62.4, Math.toRadians(90));
         Pose2d stage2start = new Pose2d(-41.2, -46.8, Math.toRadians(-90));
 
-        drive.setPoseEstimate(startPose);
+        drive.setPoseEstimate(new Pose2d(6.4, -62.4, Math.toRadians(90)));
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(6.4, -62.4, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(46.2, -30.6, Math.toRadians(180)))
@@ -120,6 +121,7 @@ public class redRightMovement extends LinearOpMode {
 class RedPipe2 extends OpenCvPipeline {
     int correctlocation = 3;
     Mat mat = new Mat();
+    Mat spare = new Mat();
 
     public enum Location {
         RIGHT,
@@ -136,6 +138,7 @@ class RedPipe2 extends OpenCvPipeline {
             new Point(580, 370));
     static final double PERCENT_COLOR_THRESHOLD = 0.15;
 
+    @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         Scalar lowHSV = new Scalar(0, 100, 85);

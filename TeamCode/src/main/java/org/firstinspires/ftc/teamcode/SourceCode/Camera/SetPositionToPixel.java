@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.SourceCode.Camera;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -13,6 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
+@Autonomous(name = "pixel")
 public class SetPositionToPixel extends LinearOpMode{
 
     public OpenCvCamera webcam;

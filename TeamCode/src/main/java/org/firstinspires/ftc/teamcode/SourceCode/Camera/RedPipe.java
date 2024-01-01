@@ -34,7 +34,7 @@ public class RedPipe extends OpenCvPipeline {
     }
 
     public void initialize(){
-        RedPipe scanner = new RedPipe(telemetry);
+        BluePipe scanner = new BluePipe(telemetry);
         webcam.setPipeline(scanner);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -53,7 +53,7 @@ public class RedPipe extends OpenCvPipeline {
         });
     }
 
-    private Location location;
+    public Location location;
     static final Rect BMiddle = new Rect(
             new Point(145, 270),
             new Point(345, 200));
@@ -92,14 +92,17 @@ public class RedPipe extends OpenCvPipeline {
         if (onMiddle){
             correctlocation = 2;
             telemetry.addData("LOCATION!:","MIDDLE");
+            location = Location.MIDDLE;
         }
         else if (onRight){
             correctlocation = 1;
             telemetry.addData("LOCATION!:","RIGHT");
+            location = Location.RIGHT;
         }
         else{
             correctlocation = 3;
             telemetry.addData("LOCATION!:","LEFT");
+            location = Location.LEFT;
         }
         telemetry.update();
         Scalar False = new Scalar(0,100,85

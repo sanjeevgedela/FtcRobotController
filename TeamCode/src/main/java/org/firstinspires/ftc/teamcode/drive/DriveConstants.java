@@ -32,7 +32,7 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = true;
+    public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
@@ -68,10 +68,10 @@ public class DriveConstants {
 
     public static double MAX_VEL = 73;
     public static double MAX_ACCEL = 73;
-    public static double MAX_ANG_VEL = 2.239;
+    public static double MAX_ANG_VEL = 5.05;
     //3.2925294280618123
     //5.029296243443937
-    public static double MAX_ANG_ACCEL = 2.239;
+    public static double MAX_ANG_ACCEL = 5.05;
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
