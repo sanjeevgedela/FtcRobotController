@@ -75,7 +75,7 @@ public class TeleOpChassisOnly extends LinearOpMode {
 
         //Create turn sequence
         TrajectorySequence turn = drive.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .turn(Math.toRadians(190))
+                .turn(Math.toRadians(180))
                 //.waitSeconds(0.7)
                 .build();
 
