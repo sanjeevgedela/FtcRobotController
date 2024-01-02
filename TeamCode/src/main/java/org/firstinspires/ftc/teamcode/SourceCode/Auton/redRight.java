@@ -431,7 +431,7 @@ public class redRight extends LinearOpMode {
             Imgproc.findContours(input, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
             List<Integer> areas = new ArrayList<>();
             List<Integer> MidX = new ArrayList<>();
-            int midx;
+            int midx = 15;
 
             // Iterate through the contours and draw rectangles around them
             for (MatOfPoint contour : contours) {
@@ -460,7 +460,7 @@ public class redRight extends LinearOpMode {
 
                 }
             }
-            Imgproc.
+            Imgproc.line(input, new Point(midx-5,0), new Point(midx+5,0), new Scalar(255,255,255));
             // Return the processed frame
             return input;
         }
