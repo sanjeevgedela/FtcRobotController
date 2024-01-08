@@ -2,26 +2,18 @@ package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.SourceCode.Camera.BluePipe;
-import org.firstinspires.ftc.teamcode.SourceCode.Camera.RedPipe;
-import org.firstinspires.ftc.teamcode.commands.Auto.IntakeOuttake;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -38,8 +30,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "RedRight")
-public class redRight extends LinearOpMode {
+@Autonomous(name = "REDbackdrop")
+public class REDbackdrop extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftSlide;
@@ -56,21 +48,24 @@ public class redRight extends LinearOpMode {
 
     public void slideMovement(double power, int encPos) {
         rightSlide.setTargetPosition(encPos);
-        leftSlide.setTargetPosition(encPos);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(power);
     }
 
     public void liftControl(double power) {
         rightSlide.setPower(power);
-        leftSlide.setPower(power);
     }
 
     public void reset() {
-        slideMovement(1, 0);
+        slideMovement(1,0);
         clawControl(0, 0);
         rotateClaw.setPosition(1);
+        sleep(700);
+        reset2();
+    }
+
+    public void reset2(){
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void rotateControl(double rotate) {
@@ -104,7 +99,6 @@ public class redRight extends LinearOpMode {
             @Override
             public void onOpened() {
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
-                sleep(1000);
             }
 
             @Override
@@ -148,11 +142,10 @@ public class redRight extends LinearOpMode {
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(9.4, -62.4, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 40);
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(33.2, -30.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(30.2, -30.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -164,7 +157,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -43.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -38.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1, 0);
@@ -178,6 +171,12 @@ public class redRight extends LinearOpMode {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.3)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                   reset();
+                })
+                .strafeRight(21)
+                .waitSeconds(1)
+                .forward(5)
                 .build();
 
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(9.4, -62.4, Math.toRadians(90)))
@@ -191,6 +190,7 @@ public class redRight extends LinearOpMode {
                     clawControl(0, 1);
                 })
                 .waitSeconds(1)
+                .back(5)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     reset();
                 })
@@ -198,7 +198,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(50, -35.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -35.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1, 0);
@@ -207,7 +207,9 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
+                .strafeRight(23)
                 .waitSeconds(1)
+                .forward(5)
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(10.4, -62.4, Math.toRadians(90)))
@@ -223,7 +225,7 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(51.4, -26.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -32.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
@@ -231,75 +233,9 @@ public class redRight extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                //see if grinds against backdrop
-                .lineToLinearHeading(new Pose2d(20, -12, Math.toRadians(110)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    slideMovement(1, 20);
-                    clawControl(1, 1);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    rotateControl(0);
-                })
-                .lineToLinearHeading(new Pose2d(-53.5, -10, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-64.2, -11, Math.toRadians(180)))
-
-                .UNSTABLE_addTemporalMarkerOffset(.2, () -> {
-                    clawControl(0, 0);
-                })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
-                })
-                //change to -10
-                //115
-                .lineToLinearHeading(new Pose2d(20, -14, Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0.7);
-                    slideMovement(1,300);
-                })
-                .lineToLinearHeading(new Pose2d(49.9, -34.2, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(1, 1);
-                })
+                .strafeRight(25)
                 .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
-                })
-
-                //see if grinds against backdrop
-                .lineToLinearHeading(new Pose2d(20, -15, Math.toRadians(100)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    slideMovement(1, 12);
-                    clawControl(1, 1);
-                    //rotateControl(0);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    rotateControl(0);
-                })
-                .lineToLinearHeading(new Pose2d(-53.5, -10, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-64.2, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, 0);
-                })
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
-                })
-                //change to -10
-                //115
-                .lineToLinearHeading(new Pose2d(20, -16, Math.toRadians(120)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    scorePositionMid();
-                })
-                .lineToLinearHeading(new Pose2d(48.9, -38.2, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(1, 1);
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
-                    reset();
-                })
-                .waitSeconds(2)
+                .forward(5)
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
@@ -336,6 +272,7 @@ public class redRight extends LinearOpMode {
                         break;
                 }
             }
+            PoseStorage.currentPose = drive.getPoseEstimate();
         }
     }
     public static class RedPipe0 extends OpenCvPipeline {
@@ -349,12 +286,13 @@ public class redRight extends LinearOpMode {
         }
 
         private volatile Location0 location0;
-        private static final Rect BMiddle = new Rect(
-                new Point(145, 270),
-                new Point(345, 200));
-        private static final Rect BRight = new Rect(
-                new Point(450, 240),
-                new Point(580, 370));
+        static final Rect BMiddle = new Rect(
+                new Point(145, 160),
+                new Point(295, 60));
+        static final Rect BRight = new Rect(
+                new Point(430, 200),
+                new Point(560, 90));
+
         static final double PERCENT_COLOR_THRESHOLD = 0.15;
         public RedPipe0(Telemetry t) {telemetry = t;}
         @Override
@@ -465,45 +403,4 @@ public class redRight extends LinearOpMode {
             return input;
         }
     }
-        public TfodProcessor tfod;
-        public VisionPortal visionPortal;
-
-        public void initTfod(HardwareMap hardwareMap) {
-
-            // Create the TensorFlow processor the easy way.
-            tfod = TfodProcessor.easyCreateWithDefaults();
-
-            // Create the vision portal the easy way.
-            visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
-
-        }
-
-        public int closestPixel() {
-
-            List<Recognition> currentRecognitions = tfod.getRecognitions();
-            List<Integer> Areas = null;
-            Recognition ClosestPixel = null;
-            int X = 0;
-
-
-            // Step through the list of recognitions and display info for each one.
-            for (Recognition recognition : currentRecognitions) {
-                double x = (recognition.getLeft() + recognition.getRight()) / 2;
-                double y = (recognition.getTop() + recognition.getBottom()) / 2;
-                double A = x * y;
-                Areas.add((int) A);
-            }
-
-            for (int i = 0; i < Areas.size(); i++) {
-                int min = 0;
-
-                if (Areas.get(i) < min) {
-                    min = Areas.get(i);
-                    ClosestPixel = currentRecognitions.get(i);
-                    X = (int) ClosestPixel.getLeft();
-                }
-                return X;
-            }
-            return X;
-        }
-    }
+}
