@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
+package org.firstinspires.ftc.teamcode.SourceCode.TeleOp.Camera.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -17,17 +18,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp (name = "BlueColorTest", group = "CameraTests")
-public class BlueColorTest extends LinearOpMode {
+@TeleOp (name = "RedColorTest", group = "CameraTests")
+public class RedColorTest extends LinearOpMode {
 
     public OpenCvCamera webcam;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        BlueRightPipe scanner = new BlueRightPipe(telemetry);
+        RedPipeline scanner = new RedPipeline(telemetry);
         webcam.setPipeline(scanner);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -47,10 +50,15 @@ public class BlueColorTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
+            drive.turn(90);
+            sleep(1000);
+            drive.turn(90);
+            sleep(1000);
         }
+
     }
 }
-class BlueRightPipe extends OpenCvPipeline {
+class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     int correctlocation = 3;
     Mat mat = new Mat();
@@ -67,13 +75,13 @@ class BlueRightPipe extends OpenCvPipeline {
             new Point(450, 240),
             new Point(580, 370));
     static final double PERCENT_COLOR_THRESHOLD = 0.15;
-    public BlueRightPipe(Telemetry t) {telemetry = t;}
+    public RedPipeline(Telemetry t) {telemetry = t;}
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,mat,Imgproc.COLOR_RGB2HSV);
-        Scalar lowHSV = new Scalar(100, 150, 0);
-        Scalar highHSV = new Scalar(120, 255, 255);
+        Scalar lowHSV = new Scalar(0,100,85);
+        Scalar highHSV = new Scalar(10,255,255);
 
         Core.inRange(mat,lowHSV,highHSV,mat);
 
@@ -92,24 +100,25 @@ class BlueRightPipe extends OpenCvPipeline {
         telemetry.addData("Middle percentage", Math.round(middleValue * 100) + "%");
 
 
-        boolean onRight = rightValue > PERCENT_COLOR_THRESHOLD;
-        boolean onMiddle = middleValue > PERCENT_COLOR_THRESHOLD;
+        boolean onRight = rightValue >PERCENT_COLOR_THRESHOLD;
+        boolean onMiddle = middleValue>PERCENT_COLOR_THRESHOLD;
 
-        if (onMiddle) {
+        if (onMiddle){
             correctlocation = 2;
             telemetry.addData("LOCATION!:","MIDDLE");
         }
-        else if (onRight) {
+        else if (onRight){
             correctlocation = 1;
             telemetry.addData("LOCATION!:","RIGHT");
         }
-        else {
+        else{
             correctlocation = 3;
             telemetry.addData("LOCATION!:","LEFT");
         }
         telemetry.update();
-        Scalar False = new Scalar(208, 91, 60);
-        Scalar True = new Scalar(254, 100, 100);
+        Scalar False = new Scalar(0,100,85
+        );
+        Scalar True = new Scalar(10,255,255);
 
 
         Imgproc.cvtColor(mat,mat,Imgproc.COLOR_GRAY2RGB);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera;
+package org.firstinspires.ftc.teamcode.SourceCode.TeleOp.Camera;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

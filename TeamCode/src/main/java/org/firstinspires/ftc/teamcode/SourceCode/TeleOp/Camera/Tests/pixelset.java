@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SourceCode.Camera.Tests;
+package org.firstinspires.ftc.teamcode.SourceCode.TeleOp.Camera.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.control.PIDFController;

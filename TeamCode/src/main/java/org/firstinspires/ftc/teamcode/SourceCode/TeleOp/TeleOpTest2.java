@@ -61,7 +61,7 @@ public class TeleOpTest2 extends LinearOpMode {
     double FrameCenterX = 180;
     double ClosestPixelX = 0;
 
-    enum DriveMode {
+    private enum DriveMode {
         NORMAL_CONTROL,
         ALIGN_TO_POINT,
         ALIGN_TO_PIXEL
@@ -235,13 +235,19 @@ public class TeleOpTest2 extends LinearOpMode {
 
     public void clawControl() {
 
-        if (gamepad2.left_trigger > 0) {
+        if (gamepad1.left_trigger > 0) {
             leftClaw.setPosition(1);
+            if((rightSlide.getTargetPosition() == rightSlide.getCurrentPosition()) && (rightSlide.getCurrentPosition() == 0)){
+                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
         } else {
             leftClaw.setPosition(0);
         }
-        if (gamepad2.right_trigger > 0) {
+        if (gamepad1.right_trigger > 0) {
             rightClaw.setPosition(1);
+            if((rightSlide.getTargetPosition() == rightSlide.getCurrentPosition()) && (rightSlide.getCurrentPosition() == 0)){
+                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
         } else {
             rightClaw.setPosition(0);
         }
@@ -268,8 +274,10 @@ public class TeleOpTest2 extends LinearOpMode {
         }
     }
 
+
     //    //Lifts the lift
     private void cascadinglift() {
+
         int rightSlideTarget = rightSlide.getCurrentPosition() - 50;
         int leftSlideTarget = leftSlide.getCurrentPosition() - 50;
 
@@ -358,12 +366,12 @@ public class TeleOpTest2 extends LinearOpMode {
         pipeline = new pixelpipeline1(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.setPipeline(pipeline);
             }
 
             @Override
@@ -431,22 +439,21 @@ public class TeleOpTest2 extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//Set Ranges
+        //Set Ranges
         rightClaw.scaleRange(0.1, 0.5);
         leftClaw.scaleRange(0, 0.5);
         rotateClaw.scaleRange(0.6, 1);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
-        while(opModeInInit()){
-            FtcDashboard.getInstance().startCameraStream(webcam, 120);
-            ClosestPixelX = pipeline.getCenterX();
-            pipeline.telemetry.update();
-        }
         waitForStart();
         sleep(100);
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                FtcDashboard.getInstance().startCameraStream(webcam, 120);
+                ClosestPixelX = pipeline.getCenterX();
+                pipeline.telemetry.update();
                 calc();
                 align(drive);
                 cascadinglift();
@@ -454,6 +461,7 @@ public class TeleOpTest2 extends LinearOpMode {
                 clawControl();
                 rotateControl();
                 automatedOuttake();
+                telemetry.addData("EncPos", rightSlide.getCurrentPosition());
                 telemetry.update();
                 planeControl();
                 hang();
@@ -468,7 +476,7 @@ public class TeleOpTest2 extends LinearOpMode {
         Scalar lowHSV = new Scalar(20, 70, 80); // lenient lower bound HSV for yellow
         Scalar highHSV = new Scalar(32, 255, 255); // lenient higher bound HSV for yellow
         int potentialAngle = 0;
-
+        //private List<MatOfPoint> hexagons;
 
 
         public pixelpipeline1(Telemetry t) {
@@ -499,16 +507,15 @@ public class TeleOpTest2 extends LinearOpMode {
                 double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
                 Imgproc.approxPolyDP(contour2f, approxCurve, epsilon, true);
 
-                // Convert the polygon to a bounding rectangle
-                Rect rect = Imgproc.boundingRect(new MatOfPoint(approxCurve.toArray()));
-
-                // Draw a rectangle around the detected region
-                Imgproc.rectangle(input, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0), 2);
-                areas.add(rect.width * rect.height);
-                MidX.add(rect.x + rect.width / 2);
-
-                Imgproc.line(input, new Point(midx, 235), new Point(midx, 245), new Scalar(0, 0, 255), 5);
-                Imgproc.line(input, new Point(280, 235), new Point(280, 245), new Scalar(0, 0, 255), 5);
+                //if (approxCurve.total() == 6) {
+                    //hexagons.add(contour);
+                    // Convert the polygon to a bounding rectangle
+                    Rect rect = Imgproc.boundingRect(new MatOfPoint(approxCurve.toArray()));
+                    // Draw a rectangle around the detected region
+                    Imgproc.rectangle(input, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0), 2);
+                    areas.add(rect.width * rect.height);
+                    MidX.add(rect.x + rect.width / 2);
+                //}
             }
 
             for (int i = 0; i < areas.size(); i++) {
@@ -520,6 +527,9 @@ public class TeleOpTest2 extends LinearOpMode {
 
                 }
             }
+
+            Imgproc.line(input, new Point(midx, 235), new Point(midx, 245), new Scalar(0, 0, 255), 5);
+            Imgproc.line(input, new Point(280, 235), new Point(280, 245), new Scalar(0, 0, 255), 5);
 
             // Return the processed frame
             potentialAngle = ((midx - 360) / 15);

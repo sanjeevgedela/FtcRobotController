@@ -50,6 +50,11 @@ public class redRightStack extends LinearOpMode {
         rightSlide.setTargetPosition(encPos);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(power);
+        if((rightSlide.getCurrentPosition() - rightSlide.getTargetPosition()) < -5){
+            rightSlide.setTargetPosition(encPos + 1);
+        } else if((rightSlide.getCurrentPosition() - rightSlide.getTargetPosition()) > 5){
+            rightSlide.setTargetPosition(encPos - 1);
+        }
     }
 
     public void liftControl(double power) {
