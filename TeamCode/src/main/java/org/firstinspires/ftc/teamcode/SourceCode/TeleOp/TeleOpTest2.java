@@ -45,6 +45,7 @@ public class TeleOpTest2 extends LinearOpMode {
     public DcMotorEx rightBack = null;
     public DcMotorEx leftSlide = null;
     public DcMotorEx rightSlide = null;
+    double lmao = 9;
 
     //Define servos
     public Servo rightClaw = null;
