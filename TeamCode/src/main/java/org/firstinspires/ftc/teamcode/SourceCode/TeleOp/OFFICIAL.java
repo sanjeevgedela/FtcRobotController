@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(name="OFFICIAL")
-public class TeleOpTest2 extends LinearOpMode {
+public class OFFICIAL extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftFront = null;
