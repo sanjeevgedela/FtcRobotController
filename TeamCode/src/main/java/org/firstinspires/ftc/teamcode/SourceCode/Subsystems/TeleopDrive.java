@@ -9,17 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.SourceCode.Subsystems.Pipelines.PixelPipeline;
 import org.firstinspires.ftc.teamcode.SourceCode.TeleOp.TeleOpTest2;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
 
 public class TeleopDrive {
-    //ClosestPixelX = pipeline.getCenterX();
 
-    Equipment equip = new Equipment();
+    Equipment equip;
+
+    TeleopDrive(Equipment e){equip = e;}
 
     double FrameCenterX = 180;
 
@@ -198,7 +199,7 @@ public class TeleopDrive {
         }
     }
 
-    public void driveInit(SampleMecanumDrive drive, PixelPipeline pipeline){
+    public void driveInit(SampleMecanumDrive drive){
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -218,7 +219,5 @@ public class TeleopDrive {
         headingController.setInputBounds(-Math.PI, Math.PI);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
-
-        equip.camera(pipeline);
     }
 }

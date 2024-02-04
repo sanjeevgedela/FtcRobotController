@@ -78,12 +78,12 @@ public class BLUEbackdrop extends LinearOpMode {
     }
 
     public void scorePositionLow(double rotate) {
-        slideMovement(1, 175);
+        slideMovement(1, 600);
         rotateControl(rotate);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 400);
+        slideMovement(1, 1440);
         rotateControl(0.75);
     }
 
@@ -114,8 +114,8 @@ public class BLUEbackdrop extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.65);
-        leftClaw.scaleRange(0, 0.5);
+        rightClaw.scaleRange(0.1, 0.4);
+        leftClaw.scaleRange(0, 0.4);
         rotateClaw.scaleRange(0.65, 1);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -136,7 +136,7 @@ public class BLUEbackdrop extends LinearOpMode {
 
         double parkStrafe = 25;
 
-        Pose2d startPose = new Pose2d(18.5, 62.4, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(14.537, 64.4, Math.toRadians(-90));
 
         drive.setPoseEstimate(startPose);
 
@@ -145,7 +145,7 @@ public class BLUEbackdrop extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(8.4, 34, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(11.4, 34, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -157,7 +157,7 @@ public class BLUEbackdrop extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(54.4, 32.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, 30.2, Math.toRadians(0)))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     clawControl(1, 0);
@@ -171,6 +171,7 @@ public class BLUEbackdrop extends LinearOpMode {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.3)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -185,7 +186,7 @@ public class BLUEbackdrop extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(12.2, 33.6, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(12.2, 35, Math.toRadians(-90)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -198,12 +199,13 @@ public class BLUEbackdrop extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(54.4, 35.2, Math.toRadians(0)))
-                .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
+                .lineToLinearHeading(new Pose2d(54.4, 37.2, Math.toRadians(0)))
+                .waitSeconds(1)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.5)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -221,7 +223,7 @@ public class BLUEbackdrop extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(30.2, 34, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(33.7, 34, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -229,11 +231,12 @@ public class BLUEbackdrop extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow(1);
                 })
-                .lineToLinearHeading(new Pose2d(54.4, 38.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, 45.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.3)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -241,7 +244,8 @@ public class BLUEbackdrop extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .strafeLeft(22)
+                .back(2)
+                .strafeLeft(15)
                 .waitSeconds(1)
                 .forward(5)
                 .build();

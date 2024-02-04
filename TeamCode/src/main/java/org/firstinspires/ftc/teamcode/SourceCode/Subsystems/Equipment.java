@@ -32,7 +32,7 @@ public class Equipment {
     public Servo plane = null;
 
     //Define camera
-    OpenCvCamera webcam = null;
+    public OpenCvCamera webcam = null;
 
     public enum Mode{
         TELEOP,

@@ -10,9 +10,12 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class TeleopCommands {
-    Equipment equip = new Equipment();
-    TeleopDrive drivebase = new TeleopDrive();
+
     PixelPipeline pipeline;
+    Equipment equip;
+
+    public TeleopCommands(Equipment e) {equip = e;}
+
 
     public void clawControl(Gamepad gamepad2) {
         if (gamepad2.left_trigger > 0) {
@@ -113,18 +116,20 @@ public class TeleopCommands {
         }
     }
 
+    TeleopDrive drivebase;
+
     public void setDrivebase(Gamepad gamepad1, SampleMecanumDrive drive, Telemetry t, double x){
         drivebase.calc(gamepad1);
         drivebase.align(drive, t, gamepad1, x);
     }
 
-    public void init(SampleMecanumDrive drive, HardwareMap hardwareMap){
-        drivebase.driveInit(drive, pipeline);
-        equip.initialize(Equipment.Mode.TELEOP, hardwareMap);
-
+    public void init(SampleMecanumDrive drive, HardwareMap hardwareMap, Equipment.Mode mode){
+        drivebase.driveInit(drive);
+        equip.initialize(mode, hardwareMap);
+        drivebase = new TeleopDrive(equip);
     }
 
-    public void activate(Gamepad gamepad1, Gamepad gamepad2, SampleMecanumDrive drive, Telemetry t){
+    public void activate(Gamepad gamepad1, Gamepad gamepad2, SampleMecanumDrive drive, Telemetry t, double x){
         //clawControl(gamepad2);
         clawControl(gamepad1);
         rotateControl(gamepad2);
@@ -132,6 +137,6 @@ public class TeleopCommands {
         cascadinglift(gamepad2);
         planeControl(gamepad2);
         hang(gamepad2);
-        setDrivebase(gamepad1, drive, t, pipeline.getCenterX());
+        setDrivebase(gamepad1, drive, t, x);
     }
 }

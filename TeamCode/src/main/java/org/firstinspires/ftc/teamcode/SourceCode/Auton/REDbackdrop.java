@@ -78,12 +78,12 @@ public class REDbackdrop extends LinearOpMode {
     }
 
     public void scorePositionLow(double rotate) {
-        slideMovement(1, 175);
+        slideMovement(1, 770);
         rotateControl(rotate);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 400);
+        slideMovement(1, 1440);
         rotateControl(0.75);
     }
 
@@ -114,8 +114,8 @@ public class REDbackdrop extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.65);
-        leftClaw.scaleRange(0, 0.5);
+        rightClaw.scaleRange(0.1, 0.4);
+        leftClaw.scaleRange(0, 0.4);
         rotateClaw.scaleRange(0.65, 1);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");

@@ -71,12 +71,12 @@ public class BLUEaudience extends LinearOpMode {
     }
 
     public void scorePositionLow() {
-        slideMovement(1, 175);
+        slideMovement(1, 600);
         rotateControl(1);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 400);
+        slideMovement(1, 1440);
         rotateControl(1);
     }
 
@@ -130,7 +130,7 @@ public class BLUEaudience extends LinearOpMode {
 
         double parkStrafe = 25;
 
-        Pose2d startPose = new Pose2d(-27,62.4, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-23.2,63.4, Math.toRadians(-90));
 
         drive.setPoseEstimate(startPose);
 
@@ -139,42 +139,37 @@ public class BLUEaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-55.7, 34, Math.toRadians(0)))
+                .waitSeconds(15)
+
+                .lineToLinearHeading(new Pose2d(-28, 31, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 35);
-                    clawControl(0, 1);
-                    rotateClaw.setPosition(0);
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
+                    rotateControl(1);
                 })
-                .back(5)
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-61.4, 6, Math.toRadians(-180)))
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(0,0);
-                })
-                .waitSeconds(0.5)
+                .lineToLinearHeading(new Pose2d(-30, 15, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
+                .turn(Math.toRadians(180))
                 .lineToLinearHeading(new Pose2d(16, 10, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, 32.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(62.4, 29.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
                 .waitSeconds(0.5)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
                 .waitSeconds(1)
-                .strafeLeft(16)
-                .forward(5)
+                .strafeRight(15)
+                .forward(8)
                 .build();
 
         TrajectorySequence middle = drive.trajectorySequenceBuilder(startPose)
@@ -182,41 +177,33 @@ public class BLUEaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-39.2, 13.1, Math.toRadians(90)))
+                .waitSeconds(15)
+                .lineToLinearHeading(new Pose2d(-29.2, 13.1, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 35);
-                    clawControl(0, 1);
-                    rotateClaw.setPosition(0);
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
+                    rotateControl(1);
                 })
-                .back(5)
+                .back(4)
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-61.4, 6, Math.toRadians(-180)))
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(0,0);
-                })
-                .waitSeconds(0.5)
+                .turn(Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
+                .waitSeconds(0.5)
                 .lineToLinearHeading(new Pose2d(16, 10, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, 35.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(62.4, 36.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
                 .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
-                })
+                .back(2)
                 .waitSeconds(1)
-                .strafeLeft(13)
+                .strafeRight(13)
                 .forward(5)
                 .build();
 
@@ -225,41 +212,34 @@ public class BLUEaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-30.2, 30.6, Math.toRadians(0)))
+                .waitSeconds(15)
+
+                .lineToLinearHeading(new Pose2d(-25.2, 30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 35);
-                    clawControl(0, 1);
-                    rotateClaw.setPosition(0);
-                })
-                .back(5)
-                .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-61.4, 6, Math.toRadians(-180)))
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(0,0);
-                })
-                .waitSeconds(0.5)
+                .back(2)
+                .lineToLinearHeading(new Pose2d(-30, 15, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .lineToLinearHeading(new Pose2d(16, 10, Math.toRadians(0)))
+                .waitSeconds(1)
+                .forward(45)
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, 32.2, Math.toRadians(0)))
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(62.4, 46.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
                 .waitSeconds(0.5)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
                 .waitSeconds(1)
-                .strafeLeft(10)
+                .strafeRight(20)
                 .forward(5)
                 .build();
 
