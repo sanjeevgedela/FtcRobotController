@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.SourceCode.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,6 +22,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.PersonalPID;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -35,8 +39,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+@Config
 @TeleOp(name="OFFICIAL")
 public class TeleOpTest2 extends LinearOpMode {
+
+    private PersonalPID controller;
+
+    public static double p = 0.006, i = 0, d = 0.0003, f = 0.0013;
 
     //Define motors
     public DcMotorEx leftFront = null;
@@ -55,6 +64,7 @@ public class TeleOpTest2 extends LinearOpMode {
     double movement;
     double rotation;
     double strafe;
+    int target;
 
     pixelpipeline1 pipeline = null;
     OpenCvCamera webcam = null;
@@ -235,19 +245,13 @@ public class TeleOpTest2 extends LinearOpMode {
 
     public void clawControl() {
 
-        if ((gamepad2.left_trigger > 0)||(gamepad1.left_trigger > 0)) {
+        if ((gamepad2.left_trigger > 0)) {
             rightClaw.setPosition(1);
-            if((rightSlide.getTargetPosition() == rightSlide.getCurrentPosition()) && (rightSlide.getCurrentPosition() == 0)){
-                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
         } else {
             rightClaw.setPosition(0);
         }
-        if ((gamepad2.right_trigger > 0)||(gamepad1.right_trigger > 0)) {
+        if ((gamepad2.right_trigger > 0)) {
             leftClaw.setPosition(1);
-            if((rightSlide.getTargetPosition() == rightSlide.getCurrentPosition()) && (rightSlide.getCurrentPosition() == 0)){
-                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
         } else {
             leftClaw.setPosition(0);
         }
@@ -263,82 +267,51 @@ public class TeleOpTest2 extends LinearOpMode {
     //controls lift motors
     private void liftControl(double power) {
         rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
-    private void resetLift() {
-        if (gamepad1.x) {
-            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+    private void slideControl(){
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
     //    //Lifts the lift
     private void cascadinglift() {
 
-        int rightSlideTarget = rightSlide.getCurrentPosition() - 70;
-        int leftSlideTarget = leftSlide.getCurrentPosition() - 70;
+        controller.setPIDF(p, i, d, f);
+        int armPos = rightSlide.getCurrentPosition();
+        double pid = controller.calculate(armPos, target);
+        rightSlide.setPower(pid);
+        leftSlide.setPower(pid);
 
-        if(rightSlideTarget > 660){
-            rightSlideTarget = 660;
-        }
-        if (leftSlideTarget > 660){
-            leftSlideTarget = 660;
-        }
+        telemetry.addData("pid", pid);
+        telemetry.addData("target", target);
+
+        if((rightSlide.getTargetPosition() == rightSlide.getCurrentPosition()) && (rightSlide.getCurrentPosition() == 0)){
+          //  rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            // leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      }
 
         if (gamepad2.y) {
-            rightSlide.setTargetPosition(770);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            target = 600;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.b) {
-            rightSlide.setTargetPosition(1440);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            target = 1200;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.a) {
-            rightSlide.setTargetPosition(2210);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            target = 1800;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.x) {
-            rightSlide.setTargetPosition(0);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            target = 0;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.left_stick_y > 0.2) {
-            rightSlide.setTargetPosition(rightSlideTarget);
-            leftSlide.setTargetPosition(leftSlideTarget);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(.5);
+            pid = pid + 0.01;
 
         } else if (gamepad2.left_stick_y < -0.2) {
-            rightSlide.setTargetPosition(rightSlide.getCurrentPosition() + 70);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(.5);
-
-        }
-    }
-    private void automatedOuttake() {
-        if (gamepad2.left_bumper) {
-            rotateClaw.setPosition(1);
-            rightSlide.setTargetPosition(660);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
-            sleep(500);
-            leftClaw.setPosition(0);
-            rightClaw.setPosition(0);
-            sleep(250);
-            leftClaw.setPosition(1);
-            rightClaw.setPosition(1);
-            rightSlide.setTargetPosition(0);
-            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftControl(1);
+            pid = pid + 0.01;
         }
     }
 
@@ -347,20 +320,10 @@ public class TeleOpTest2 extends LinearOpMode {
             plane.setPosition(0);
         }
     }
-    public void hang(){
-        if(gamepad2.dpad_right){
-            leftSlide.setTargetPosition(2000);
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftSlide.setPower(1);
-        } else if (gamepad2.dpad_left){
-            leftSlide.setTargetPosition(0);
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftSlide.setPower(1);
-        }
-    }
 
     @Override
     public void runOpMode () {
+        controller = new PersonalPID(p, i, d, f);
         pipeline = new pixelpipeline1(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -439,7 +402,7 @@ public class TeleOpTest2 extends LinearOpMode {
 
         //Set Ranges
         rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0, 0.4);
+        leftClaw.scaleRange(0.1, 0.4);
         rotateClaw.scaleRange(0.65, 1);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
@@ -452,17 +415,15 @@ public class TeleOpTest2 extends LinearOpMode {
                 FtcDashboard.getInstance().startCameraStream(webcam, 120);
                 ClosestPixelX = pipeline.getCenterX();
                 pipeline.telemetry.update();
+                telemetry.addData("EncPos", rightSlide.getCurrentPosition());
+                telemetry.update();
+
                 calc();
                 align(drive);
                 cascadinglift();
-                resetLift();
                 clawControl();
                 rotateControl();
-                automatedOuttake();
-                telemetry.addData("EncPos", rightSlide.getCurrentPosition());
-                telemetry.update();
                 planeControl();
-                hang();
             }
         }
     }

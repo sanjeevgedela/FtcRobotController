@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.PersonalPID;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -34,6 +35,9 @@ public class REDaudience extends LinearOpMode {
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
 
+    public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
+    int target;
+
     Pose2d stage2start = new Pose2d(-41.2, -46.8, Math.toRadians(-90));
 
     //Define servos
@@ -43,13 +47,15 @@ public class REDaudience extends LinearOpMode {
 
     public void slideMovement(double power, int encPos) {
         rightSlide.setTargetPosition(encPos);
+        leftSlide.setTargetPosition(encPos);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(power);
     }
 
-
     public void liftControl(double power) {
         rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
     public void reset() {
@@ -60,6 +66,7 @@ public class REDaudience extends LinearOpMode {
 
     public void reset2(){
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void rotateControl(double rotate) {
@@ -72,12 +79,22 @@ public class REDaudience extends LinearOpMode {
     }
 
     public void scorePositionLow() {
-        slideMovement(1, 770);
+        rightSlide.setTargetPosition(700);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(700);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
         rotateControl(1);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 1440);
+        rightSlide.setTargetPosition(1440);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rightSlide.setTargetPosition(1440);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
         rotateControl(1);
     }
 
@@ -110,7 +127,7 @@ public class REDaudience extends LinearOpMode {
 
         //Set Ranges
         rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0, 0.4);
+        leftClaw.scaleRange(0.1, 0.4);
         rotateClaw.scaleRange(0.65, 1);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -140,11 +157,11 @@ public class REDaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .strafeLeft(9)
-                .lineToLinearHeading(new Pose2d(-39, -30.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-38.5, -30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
+                .back(4)
                 .waitSeconds(10)
                 .lineToLinearHeading(new Pose2d(-46, -11, Math.toRadians(0)))
                 .waitSeconds(0.5)
@@ -159,7 +176,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -48.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4, -45.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
@@ -178,9 +195,8 @@ public class REDaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .strafeLeft(9)
                 .waitSeconds(10)
-                .lineToLinearHeading(new Pose2d(-42.2, -13.1, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-42.2, -14.1, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -197,7 +213,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -33.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4, -31.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
@@ -216,12 +232,12 @@ public class REDaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .strafeLeft(9)
-                .lineToLinearHeading(new Pose2d(-43, -35.35, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-39, -35.35, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .waitSeconds(1)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(1);
                 })
@@ -241,7 +257,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -28.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(52.4, -16.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
@@ -302,6 +318,7 @@ public class REDaudience extends LinearOpMode {
         RedPipe10.Location10 detectedColor = pipeline.getLocation();
 
         while (opModeIsActive()) {
+
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
             pipeline.telemetry.update();
 

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.PersonalPID;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -39,6 +40,10 @@ public class REDbackdrop extends LinearOpMode {
 
     public OpenCvCamera webcam;
 
+    public PersonalPID controller;
+    public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
+    int target;
+
     Pose2d stage2start = new Pose2d(-41.2, -46.8, Math.toRadians(-90));
 
     //Define servos
@@ -48,24 +53,26 @@ public class REDbackdrop extends LinearOpMode {
 
     public void slideMovement(double power, int encPos) {
         rightSlide.setTargetPosition(encPos);
+        leftSlide.setTargetPosition(encPos);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(power);
     }
 
     public void liftControl(double power) {
         rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
     public void reset() {
         slideMovement(1,0);
         clawControl(0, 0);
         rotateClaw.setPosition(1);
-        sleep(700);
-        reset2();
     }
 
     public void reset2(){
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void rotateControl(double rotate) {
@@ -77,19 +84,31 @@ public class REDbackdrop extends LinearOpMode {
         rightClaw.setPosition(right);
     }
 
-    public void scorePositionLow(double rotate) {
-        slideMovement(1, 770);
-        rotateControl(rotate);
+    public void scorePositionLow() {
+        rightSlide.setTargetPosition(700);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(700);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rotateControl(1);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 1440);
-        rotateControl(0.75);
+        rightSlide.setTargetPosition(1440);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rightSlide.setTargetPosition(1440);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rotateControl(1);
     }
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        controller = new PersonalPID(p, i, d, f);
+
         RedPipe0 pipeline = new RedPipe0(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -115,7 +134,7 @@ public class REDbackdrop extends LinearOpMode {
 
         //Set Ranges
         rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0, 0.4);
+        leftClaw.scaleRange(0.1, 0.4);
         rotateClaw.scaleRange(0.65, 1);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -145,24 +164,26 @@ public class REDbackdrop extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(30.2, -30.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(31.2, -30.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .waitSeconds(1)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     reset();
                 })
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    scorePositionLow(1);
+                    scorePositionLow();
                 })
                 .lineToLinearHeading(new Pose2d(54.4, -38.2, Math.toRadians(0)))
                 .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.5)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -196,14 +217,15 @@ public class REDbackdrop extends LinearOpMode {
                 })
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    scorePositionLow(1);
+                    scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(54.4, -35.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -33.2, Math.toRadians(0)))
                 .waitSeconds(3)
-                .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
                 .waitSeconds(0.5)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -223,13 +245,14 @@ public class REDbackdrop extends LinearOpMode {
                 })
                 .waitSeconds(0.3)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionLow(1);
+                    scorePositionLow( );
                 })
-                .lineToLinearHeading(new Pose2d(54.4, -32.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -37.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
-                .waitSeconds(0.3)
+                .waitSeconds(0.5)
+                .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -255,6 +278,11 @@ public class REDbackdrop extends LinearOpMode {
         while (opModeIsActive()) {
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
             pipeline.telemetry.update();
+            controller.setPIDF(p, i, d, f);
+            int armPos = rightSlide.getCurrentPosition();
+            double pid = controller.calculate(armPos, target);
+            rightSlide.setPower(pid);
+            leftSlide.setPower(pid);
 
             if (detectedColor != null) {
                 switch (detectedColor) {
