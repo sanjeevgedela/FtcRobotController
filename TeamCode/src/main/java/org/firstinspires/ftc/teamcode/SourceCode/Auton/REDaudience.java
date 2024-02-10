@@ -157,7 +157,8 @@ public class REDaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-38.5, -30.6, Math.toRadians(0)))
+                .strafeLeft(5)
+                .lineToLinearHeading(new Pose2d(-36.5, -30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -176,11 +177,11 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -45.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(52.4, -45.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
-                .back(4)
+                .back(6)
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
@@ -267,7 +268,7 @@ public class REDaudience extends LinearOpMode {
                     reset();
                 })
                 .waitSeconds(1)
-                .strafeLeft(24)
+                .strafeLeft(18)
                 .forward(5)
                 .build();
 
