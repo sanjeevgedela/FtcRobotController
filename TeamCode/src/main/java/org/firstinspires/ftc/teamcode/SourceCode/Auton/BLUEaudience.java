@@ -262,6 +262,7 @@ public class BLUEaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
+                .strafeRight(5)
                 .lineToLinearHeading(new Pose2d(-24.2, 30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
