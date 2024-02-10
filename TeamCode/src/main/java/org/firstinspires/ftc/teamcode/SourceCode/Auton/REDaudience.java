@@ -244,7 +244,7 @@ public class REDaudience extends LinearOpMode {
                 .waitSeconds(10)
                 .back(5)
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-56, -15.4, 0))
+                .lineToLinearHeading(new Pose2d(-56, -11.4, 0))
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
