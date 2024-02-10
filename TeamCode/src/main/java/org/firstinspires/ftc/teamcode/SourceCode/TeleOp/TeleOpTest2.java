@@ -44,6 +44,7 @@ import java.util.List;
 public class TeleOpTest2 extends LinearOpMode {
 
     private PersonalPID controller;
+    int test = 0;
 
     public static double p = 0.006, i = 0, d = 0.0003, f = 0.0013;
 
