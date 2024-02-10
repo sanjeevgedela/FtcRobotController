@@ -262,7 +262,7 @@ public class BLUEaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-25.2, 30.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-24.2, 30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -288,12 +288,12 @@ public class BLUEaudience extends LinearOpMode {
                     scorePositionLow();
                 })
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(62.8, 50.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(63.1, 50.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
                 .waitSeconds(0.5)
-                .back(2)
+                .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
