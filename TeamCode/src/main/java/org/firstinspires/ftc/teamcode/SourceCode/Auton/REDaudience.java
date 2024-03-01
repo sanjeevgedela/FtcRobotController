@@ -79,21 +79,21 @@ public class REDaudience extends LinearOpMode {
     }
 
     public void scorePositionLow() {
-        rightSlide.setTargetPosition(700);
+        rightSlide.setTargetPosition(600);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        leftSlide.setTargetPosition(700);
+        leftSlide.setTargetPosition(600);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
 
     public void scorePositionMid() {
-        rightSlide.setTargetPosition(1440);
+        rightSlide.setTargetPosition(850);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        rightSlide.setTargetPosition(1440);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setTargetPosition(850);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
@@ -126,9 +126,10 @@ public class REDaudience extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0.1, 0.4);
+        leftClaw.scaleRange(0.5, 1);
+        rightClaw.scaleRange(0, 0.5);
         rotateClaw.scaleRange(0.65, 1);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -150,7 +151,7 @@ public class REDaudience extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(-38.69,-65, Math.toRadians(90));
 
-        drive.setPoseEstimate(startPose);
+        drive.setPoseEstimate(new Pose2d(-38.69,-65, Math.toRadians(90)));
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
@@ -164,25 +165,41 @@ public class REDaudience extends LinearOpMode {
                 })
                 .back(4)
                 .waitSeconds(10)
-                .lineToLinearHeading(new Pose2d(-46, -11, Math.toRadians(0)))
-                .waitSeconds(0.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                    slideMovement(1,270);
+                    rotateControl(.1);
+                })
+                .lineToLinearHeading(new Pose2d(-46, -11, Math.toRadians(180)))
+                .forward(12)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
                 .waitSeconds(0.5)
+                .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .lineToLinearHeading(new Pose2d(16, -10, Math.toRadians(0)))
+                .turn(Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(40, -10, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, -45.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(52.4, -38.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(1, 1);
+                    clawControl(1, 0);
                 })
                 .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                .strafeRight(5)
+                .forward(6.2)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
                 .waitSeconds(0.5)
+                .back(10)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -197,16 +214,26 @@ public class REDaudience extends LinearOpMode {
                     clawControl(0, 0);
                 })
                 .waitSeconds(10)
-                .lineToLinearHeading(new Pose2d(-42.2, -14.1, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-42.2, -16.1, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .back(5)
-                .waitSeconds(1)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 0);
+                })
+                .turn(-Math.toRadians(90))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                    rotateControl(.1);
+                    slideMovement(1,275);
+                })
+                .forward(21)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
                 .waitSeconds(0.5)
+                .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -214,7 +241,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(50.4, -31.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4, -30.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
@@ -233,57 +260,90 @@ public class REDaudience extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(-39, -35.35, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-39.5, -35.35, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .waitSeconds(1)
-                .back(3)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(1);
-                })
+                .lineToLinearHeading(new Pose2d(-42, -14, Math.toRadians(180)))
                 .waitSeconds(10)
-                .back(5)
-                .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(-56, -11.4, 0))
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
+                    rotateControl(0.1);
+                    slideMovement(1, 280);
+                })
+                .forward(23)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0,0);
                 })
                 .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
                 })
-                .lineToLinearHeading(new Pose2d(16, -10, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                .turn(Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(35, -6, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, -16.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(52.4, -16, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(1, 1);
+                    clawControl(1, 0);
                 })
                 .back(2)
-                .waitSeconds(0.5)
+                .strafeRight(8)
+                .forward(2)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
+                .waitSeconds(.3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
                 .waitSeconds(1)
-                .strafeLeft(18)
-                .forward(5)
                 .build();
 
-        TrajectorySequence stage2 = drive.trajectorySequenceBuilder(stage2start)
-                .lineToLinearHeading(new Pose2d(20, -10, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 60);
-                    clawControl(1, 1);
-                })
-                .lineToLinearHeading(new Pose2d(-58.4, -10, Math.toRadians(-180)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    slideMovement(1, 60);
-                    clawControl(0, 0);
-                })
-                .waitSeconds(2)
+        TrajectorySequence stage2 = drive.trajectorySequenceBuilder(new Pose2d(-38.69,-65, Math.toRadians(90)))
+                .forward(15)
+                .lineToLinearHeading(new Pose2d(-43, -34, Math.toRadians(90)))
+                .forward(8)
+                .lineToLinearHeading(new Pose2d(-60, -35.6, Math.toRadians(180)))
+
+                .splineTo(new Vector2d(-20,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(10,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(38,-36), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(50.4, -43.2, Math.toRadians(180)))
+                .waitSeconds(.1)
+
+                .splineTo(new Vector2d(10,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(-30,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(-45,-35.6), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(-60, -35.6, Math.toRadians(0)))
+                .waitSeconds(.1)
+
+                .splineTo(new Vector2d(-20,-60), Math.toRadians(0))
+                .splineTo(new Vector2d(10,-60), Math.toRadians(0))
+                .splineTo(new Vector2d(38,-36), Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(50.4, -43.2, Math.toRadians(180)))
+                .waitSeconds(.1)
+
+                .splineTo(new Vector2d(10,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(-30,-60), Math.toRadians(180))
+                .splineTo(new Vector2d(-45,-35.6), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(-60, -35.6, Math.toRadians(0)))
+                .waitSeconds(.1)
+
+                .splineTo(new Vector2d(-20,-60), Math.toRadians(0))
+                .splineTo(new Vector2d(10,-60), Math.toRadians(0))
+                .splineTo(new Vector2d(38,-36), Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(50.4, -43.2, Math.toRadians(180)))
+                .waitSeconds(.1)
+
+                //.lineToLinearHeading(new Pose2d(50.4,-43.2, Math.toRadians(0)))
+                //.lineToLinearHeading(new Pose2d(20,-12, Math.toRadians(0)))
+                //.lineToLinearHeading(new Pose2d(-58.4,-12, Math.toRadians(-180)))
+                //.lineToLinearHeading(new Pose2d(20,-12, Math.toRadians(0)))
+                //.splineTo(new Vector2d(50, -35.2), 0)
+                .strafeLeft(20)
                 .build();
 
         TrajectorySequence stage3 = drive.trajectorySequenceBuilder(new Pose2d(-58.4, -12, Math.toRadians(-180)))

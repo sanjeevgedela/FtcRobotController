@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -98,8 +99,8 @@ public class BLUEbackdrop extends LinearOpMode {
         rightSlide.setTargetPosition(1440);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        rightSlide.setTargetPosition(1440);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setTargetPosition(1440);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
@@ -133,9 +134,10 @@ public class BLUEbackdrop extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0.1, 0.4);
-        rotateClaw.scaleRange(0.65, 1);
+        leftClaw.scaleRange(0.5, 1);
+        rightClaw.scaleRange(0, 0.5);
+        rotateClaw.scaleRange(0.67, 0.92);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -241,29 +243,62 @@ public class BLUEbackdrop extends LinearOpMode {
                     clawControl(0, 1);
                 })
                 .waitSeconds(0.5)
-                .back(2)
+                .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 0);
+                })
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(54.4, 44.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(53.4, 44.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(1, 0);
+                    clawControl(0.85, 0);
                 })
                 .waitSeconds(0.3)
                 .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .waitSeconds(1)
                 .back(2)
-                .strafeLeft(15)
-                .waitSeconds(1)
-                .forward(5)
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
                 .strafeRight(parkStrafe)
                 .forward(10)
+                .lineToLinearHeading(new Pose2d(25,12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, 16, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> {
+                    rotateControl(0);
+                    slideMovement(1, 245);
+                    clawControl(1,1);
+                })
+                .lineToLinearHeading(new Pose2d(-59, 12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(0,0);
+                })
+                .waitSeconds(0.5)
+                .back(10)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+                .turn(Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(-48, 16, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(25,12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                    scorePositionLow();
+                })
+                .lineToLinearHeading(new Pose2d(54, 39, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(1, 1);
+                })
+                .back(4)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .strafeLeft(15)
+                .waitSeconds(1)
+                .forward(5)
+
                 .build();
 
         while (opModeInInit()){

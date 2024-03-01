@@ -30,11 +30,14 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-@Autonomous(name = "BLUEaudience")
-public class BLUEaudience extends LinearOpMode {
+@Autonomous(name = "BLUEaudienceStack")
+public class BLUEaudienceStack extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
+    WebcamName webcam1;
+    apriltag tag;
+    double dist;
 
     public PersonalPID controller;
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
@@ -82,7 +85,6 @@ public class BLUEaudience extends LinearOpMode {
 
     public void scorePositionLow() {
         rightSlide.setTargetPosition(600);
-        target = 600;
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         leftSlide.setTargetPosition(600);
@@ -92,12 +94,11 @@ public class BLUEaudience extends LinearOpMode {
     }
 
     public void scorePositionMid() {
-        rightSlide.setTargetPosition(1440);
-        target = 1440;
+        rightSlide.setTargetPosition(1000);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        rightSlide.setTargetPosition(1440);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setTargetPosition(1000);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
@@ -106,11 +107,10 @@ public class BLUEaudience extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         controller = new PersonalPID(p, i, d, f);
-        BluePipe10 pipeline = new BluePipe10(telemetry);
+        BluePipe11 pipeline = new BluePipe11(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);
-
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -123,6 +123,9 @@ public class BLUEaudience extends LinearOpMode {
 
             }
         });
+
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        tag = new apriltag(webcam1);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -160,153 +163,289 @@ public class BLUEaudience extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
-                .waitSeconds(10)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
+                    tag.initAprilTag();
                 })
-                .lineToLinearHeading(new Pose2d(-24, 31, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-35, 36, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .back(4)
-                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
-                    rotateControl(1);
-                })
-                .waitSeconds(1)
+                .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0.1);
                     slideMovement(1, 275);
                     clawControl(0,1);
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
-                .lineToLinearHeading(new Pose2d(-30, 15.2, Math.toRadians(180)))
-                .forward(20)
+                .lineToLinearHeading(new Pose2d(-30, 37.1, Math.toRadians(180)))
+                .forward(14)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
-                .waitSeconds(0.5)
-                .back(10)
+                .waitSeconds(0.3)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .turn(Math.toRadians(180))
-                .lineToLinearHeading(new Pose2d(16, 10, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(25, 59), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(63.4, 29.2, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(43, 48), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(1, 1);
+                    dist = tag.calculate();
                 })
-                .waitSeconds(0.5)
-                .back(2)
+                .waitSeconds(0.3)
+                .lineToLinearHeading(new Pose2d(70, 35.5 + dist, Math.toRadians(0)))
+                //initial drop
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(1, 0);
+                })
+                .back(3)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                .strafeLeft(5)
+                .forward(4.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
+                .waitSeconds(0.2)
+                .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .waitSeconds(1)
-                .strafeRight(20)
+                .lineToLinearHeading(new Pose2d(30, 60, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-18, 56), Math.toRadians(180))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(0);
+                    slideMovement(1, 250);
+                    clawControl(1,1);
+                })
+                .splineToConstantHeading(new Vector2d(-15, 36.4), Math.toRadians(180))
+                .forward(28)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 0);
+                })
+                .waitSeconds(0.5)
+                .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .lineToLinearHeading(new Pose2d(-30, 59, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(30, 58), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                //secondary drop
+                .splineToConstantHeading(new Vector2d(69, 45), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(1, 1);
+                })
+                .waitSeconds(0.3)
+                .back(1)
+                .waitSeconds(0.3)
+                .back(2)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .strafeLeft(20)
                 .forward(8)
                 .build();
 
         TrajectorySequence middle = drive.trajectorySequenceBuilder(startPose)
-                .waitSeconds(10)
-
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
+                    tag.initAprilTag();
                 })
-                .lineToLinearHeading(new Pose2d(-26.2, 13.1, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-26.2, 36.5, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .back(4)
-                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
-                    rotateControl(1);
-                })
-                .back(4)
-                .waitSeconds(1)
+                .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0.1);
                     slideMovement(1, 275);
                     clawControl(0,1);
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
-                .lineToLinearHeading(new Pose2d(-30, 14.3, Math.toRadians(180)))
-                .forward(18)
+                .lineToLinearHeading(new Pose2d(-30, 38.4, Math.toRadians(180)))
+                .forward(16)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
-                .waitSeconds(0.5)
-                .back(10)
+                .waitSeconds(0.3)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .turn(Math.toRadians(180))
-                .lineToLinearHeading(new Pose2d(16, 10, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(25, 58), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(63.7, 48.2, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(43, 41), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    dist = tag.calculate();
+                })
+                .waitSeconds(0.1)
+                .lineToLinearHeading(new Pose2d(68, 40 + dist, Math.toRadians(0)))
+                //initial drop
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(1, 0);
+                })
+                .back(3)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                .strafeRight(8)
+                .forward(4.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
+                .waitSeconds(0.2)
+                .back(4)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+                .lineToLinearHeading(new Pose2d(30, 60, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-18, 58), Math.toRadians(180))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(0);
+                    slideMovement(1, 250);
+                    clawControl(1,1);
+                })
+                .splineToConstantHeading(new Vector2d(-26, 37), Math.toRadians(180))
+                .waitSeconds(.01)
+                .forward(20)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 0);
+                })
+                .waitSeconds(0.5)
+                .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .lineToLinearHeading(new Pose2d(-30, 59, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(30, 56), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                //secondary drop
+                .splineToConstantHeading(new Vector2d(69, 30), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.3)
+                .back(1)
+                .waitSeconds(0.3)
                 .back(2)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
                 })
-                .waitSeconds(1)
-                .strafeRight(13)
-                .forward(5)
+                .strafeLeft(20)
+                .forward(8)
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
-                .waitSeconds(10)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0);
+                    rotateControl(0.2);
                     clawControl(0, 0);
+                    tag.initAprilTag();
                 })
                 .strafeRight(7)
                 .lineToLinearHeading(new Pose2d(-22.2, 30.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .back(2)
+                .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0.1);
                     slideMovement(1, 275);
                     clawControl(0,1);
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
-                .lineToLinearHeading(new Pose2d(-30, 11.2, Math.toRadians(180)))
-                .forward(13)
+                .lineToLinearHeading(new Pose2d(-30, 35, Math.toRadians(180)))
+                .forward(17)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
-                .waitSeconds(0.5)
-                .back(10)
+                .waitSeconds(0.3)
+                .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .turn(Math.toRadians(180))
-                .forward(70)
+                .lineToLinearHeading(new Pose2d(-30, 62, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(25, 61), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(65, 42, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(43, 48), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, 1);
+                    dist = tag.calculate();
                 })
-                .lineToLinearHeading(new Pose2d(65, 53.6, Math.toRadians(0)))
+                .waitSeconds(0.3)
+                .lineToLinearHeading(new Pose2d(66, 56.8 + dist, Math.toRadians(0)))
+                //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
-                .waitSeconds(0.5)
+                .back(3)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                .strafeRight(5)
+                .forward(4.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .strafeRight(30)
-                .forward(5)
+                .lineToLinearHeading(new Pose2d(30, 63, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-18, 62), Math.toRadians(180))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(0);
+                    slideMovement(1, 250);
+                    clawControl(1,1);
+                })
+                .splineToConstantHeading(new Vector2d(-19, 33.4), Math.toRadians(180))
+                .forward(28)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 0);
+                })
+                .waitSeconds(0.5)
+                .back(6)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .lineToLinearHeading(new Pose2d(-30, 59, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(30, 58), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionMid();
+                })
+                //secondary drop
+                .splineToConstantHeading(new Vector2d(66.3, 40), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(1, 1);
+                })
+                .waitSeconds(0.3)
+                .back(1)
+                .waitSeconds(0.3)
+                .back(2)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    reset();
+                })
+                .strafeLeft(20)
+                .forward(8)
                 .build();
 
         TrajectorySequence stage2 = drive.trajectorySequenceBuilder(stage2start)
@@ -374,49 +513,55 @@ public class BLUEaudience extends LinearOpMode {
                 .strafeRight(parkStrafe)
                 .forward(10)
                 .build();
-
-        while (opModeInInit()){
-            FtcDashboard.getInstance().startCameraStream(webcam, 120);
-            pipeline.telemetry.update();
+        if (opModeInInit()) {
+            while (opModeInInit()) {
+                FtcDashboard.getInstance().startCameraStream(webcam, 120);
+                pipeline.telemetry.update();
+            }
         }
 
         waitForStart();
         sleep(100);
-        BluePipe10.Location10 detectedColor = pipeline.getLocation();
-
-        while (opModeIsActive()) {
-            FtcDashboard.getInstance().startCameraStream(webcam, 120);
-            pipeline.telemetry.update();
-            if (detectedColor != null) {
-                switch (detectedColor) {
-                    case RIGHT:
-                        drive.followTrajectorySequence(right);
-                        sleep(30000000);
-                        break;
-                    case MIDDLE:
-                        drive.followTrajectorySequence(middle);
-                        sleep(30000000);
-                        break;
-                    case LEFT:
-                        drive.followTrajectorySequence(left);
-                        sleep(30000000);
-                        break;
+        BluePipe11.Location11 detectedColor = pipeline.getLocation();
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+                FtcDashboard.getInstance().startCameraStream(webcam, 120);
+                telemetry.addData("distance", dist);
+                telemetry.update();
+                if (detectedColor != null) {
+                    switch (detectedColor) {
+                        case RIGHT:
+                            webcam.closeCameraDevice();
+                            drive.followTrajectorySequence(right);
+                            sleep(30000000);
+                            break;
+                        case MIDDLE:
+                            webcam.closeCameraDevice();
+                            drive.followTrajectorySequence(middle);
+                            sleep(30000000);
+                            break;
+                        case LEFT:
+                            webcam.closeCameraDevice();
+                            drive.followTrajectorySequence(left);
+                            sleep(30000000);
+                            break;
+                    }
                 }
+                PoseStorage.currentPose = drive.getPoseEstimate();
             }
-            PoseStorage.currentPose = drive.getPoseEstimate();
         }
     }
-    public static class BluePipe10 extends OpenCvPipeline {
+    public static class BluePipe11 extends OpenCvPipeline {
         Telemetry telemetry;
         Mat mat = new Mat();
 
-        public enum Location10{
+        public enum Location11{
             RIGHT,
             MIDDLE,
             LEFT
         }
 
-        private volatile Location10 location10;
+        private volatile Location11 location11;
         static final Rect BMiddle = new Rect(
                 new Point(145, 160),
                 new Point(295, 60));
@@ -424,7 +569,7 @@ public class BLUEaudience extends LinearOpMode {
                 new Point(430, 200),
                 new Point(560, 90));
         static final double PERCENT_COLOR_THRESHOLD = 0.15;
-        public BluePipe10(Telemetry t) {telemetry = t;}
+        public BluePipe11(Telemetry t) {telemetry = t;}
         @Override
         public Mat processFrame(Mat input) {
             Imgproc.cvtColor(input,mat,Imgproc.COLOR_RGB2HSV);
@@ -450,15 +595,15 @@ public class BLUEaudience extends LinearOpMode {
 
             if (onMiddle){
                 telemetry.addData("LOCATION!:","MIDDLE");
-                location10 = Location10.MIDDLE;
+                location11 = Location11.MIDDLE;
             }
             else if (onRight){
                 telemetry.addData("LOCATION!:","RIGHT");
-                location10 = Location10.RIGHT;
+                location11 = Location11.RIGHT;
             }
             else{
                 telemetry.addData("LOCATION!:","LEFT");
-                location10 = Location10.LEFT;
+                location11 = Location11.LEFT;
             }
             telemetry.update();
             Scalar False = new Scalar(0,100,85);
@@ -466,15 +611,15 @@ public class BLUEaudience extends LinearOpMode {
 
 
             Imgproc.cvtColor(mat,mat,Imgproc.COLOR_GRAY2RGB);
-            Imgproc.rectangle(mat,BRight , location10 == Location10.RIGHT? True:False);
-            Imgproc.rectangle(mat,BMiddle, location10 == Location10.MIDDLE? True :False);
+            Imgproc.rectangle(mat,BRight , location11 == Location11.RIGHT? True:False);
+            Imgproc.rectangle(mat,BMiddle, location11 == Location11.MIDDLE? True :False);
 
             middle.release();
             right.release();
             return mat;
         }
-        public Location10 getLocation(){
-            return location10;
+        public Location11 getLocation(){
+            return location11;
         }
     }
 }

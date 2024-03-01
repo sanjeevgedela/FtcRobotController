@@ -133,9 +133,10 @@ public class REDbackdrop extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0.1, 0.4);
+        leftClaw.scaleRange(0.5, 1);
+        rightClaw.scaleRange(0, 0.5);
         rotateClaw.scaleRange(0.65, 1);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -239,7 +240,7 @@ public class REDbackdrop extends LinearOpMode {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(8.4, -34.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(8.4, -29.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
@@ -247,7 +248,7 @@ public class REDbackdrop extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow( );
                 })
-                .lineToLinearHeading(new Pose2d(54.4, -37.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(54.4, -30.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })

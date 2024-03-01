@@ -136,8 +136,8 @@ public class TeleOpTest2 extends LinearOpMode {
                 // Create a vector from the gamepad x/y inputs which is the field relative movement
                 // Then, rotate that vector by the inverse of that heading for field centric control
                 Vector2d fieldFrameInput = new Vector2d(
-                        x,
-                        y
+                        y,
+                        x
                 );
                 Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
 
@@ -261,6 +261,8 @@ public class TeleOpTest2 extends LinearOpMode {
     public void rotateControl() {
         if (gamepad2.dpad_down){
             rotateClaw.setPosition(0);
+        } else if (gamepad2.dpad_up){
+            rotateClaw.setPosition(1);
         }
     }
 
@@ -292,6 +294,10 @@ public class TeleOpTest2 extends LinearOpMode {
             // leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       }
 
+        if(pid < 0.02 && pid > -0.08 && armPos < 55){
+            pid = 0;
+        }
+
         if (gamepad2.y) {
             target = 600;
             rotateClaw.setPosition(1);
@@ -313,6 +319,15 @@ public class TeleOpTest2 extends LinearOpMode {
 
         } else if (gamepad2.left_stick_y < -0.2) {
             pid = pid + 0.01;
+
+        } else if (gamepad2.dpad_right){
+            rotateClaw.setPosition(0.2);
+            target = 160;
+
+        } else if (gamepad2.dpad_left){
+            rotateClaw.setPosition(0.2);
+            target = 80;
+
         }
     }
 
@@ -392,7 +407,7 @@ public class TeleOpTest2 extends LinearOpMode {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        plane.setDirection(Servo.Direction.FORWARD);
+        plane.setDirection(Servo.Direction.REVERSE);
 
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -402,9 +417,10 @@ public class TeleOpTest2 extends LinearOpMode {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0.1, 0.4);
+        leftClaw.scaleRange(0.5, 1);
+        rightClaw.scaleRange(0, 0.5);
         rotateClaw.scaleRange(0.65, 1);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
