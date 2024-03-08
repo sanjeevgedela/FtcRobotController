@@ -1,23 +1,27 @@
 package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class apriltag {
     WebcamName webcam1;
+    GainControl gainControl;
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     boolean targetFound = false;
@@ -26,10 +30,12 @@ public class apriltag {
         webcam1 = a;
     }
 
-    public void initAprilTag() {
+    public void initAprilTag(VisionPortal visionPortal) {
 
         // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
+
+
 
         CameraName switchableCamera = ClassFactory.getInstance()
                 .getCameraManager().nameForSwitchableCamera(webcam1);
@@ -39,6 +45,7 @@ public class apriltag {
                 .setCamera(switchableCamera)
                 .addProcessor(aprilTag)
                 .build();
+
     }
 
     public enum DETECT {
@@ -100,17 +107,20 @@ public class apriltag {
     }
 
     public double calculate() {
+
         double distance = 0;
-        if (targetFound == true) {
+
+        if (targetFound) {
             if(desiredTag.ftcPose.x < 0){
-                distance = desiredTag.ftcPose.x -5;
+                distance = desiredTag.ftcPose.x +2;
             } else if (desiredTag.ftcPose.x > 0) {
-                distance = desiredTag.ftcPose.x + 5;
+                distance = desiredTag.ftcPose.x - 2;
             }
-            if (distance < 0.5 || distance > -0.5) {
-                distance = 0;
+            if (distance < 0.4 || distance > -0.4) {
+              //  distance = 0;
             }
         }
+
         return distance;
 
     }

@@ -6,8 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.SourceCode.Auton.apriltag;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.vision.VisionPortal;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "AprilTAGS")
 public class aprilTagTest extends LinearOpMode {
@@ -16,6 +21,9 @@ public class aprilTagTest extends LinearOpMode {
     public DcMotorEx rightFront = null;
     public DcMotorEx leftBack = null;
     public DcMotorEx rightBack = null;
+
+    private VisionPortal visionPortal;               // Used to manage the video source.
+
 
 
     //Define servos
@@ -32,6 +40,39 @@ public class aprilTagTest extends LinearOpMode {
     WebcamName webcam1;
     apriltag tag;
     double dist;
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
 
     public void driverControl(SampleMecanumDrive drive) {
 
@@ -80,17 +121,21 @@ public class aprilTagTest extends LinearOpMode {
         webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
         tag = new apriltag(webcam1);
         if(opModeInInit()) {
-            while(opModeInInit()){
-                tag.initAprilTag();
-            }
+                tag.initAprilTag(visionPortal);
         }
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        waitForStart();
+
+        setManualExposure(6, 250);
+
         while (opModeIsActive()){
             driverControl(drive);
-            tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+            tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.RED);
             tag.findTag(telemetry);
             telemetry.addData("distance", tag.calculate());
+            telemetry.update();
         }
     }
 }
