@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.PersonalPID;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -34,6 +35,10 @@ public class REDaudience extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
+    private VisionPortal visionPortal;
+    int dist;
+    WebcamName webcam1;
+    apriltag tag;
 
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
     int target;
@@ -121,6 +126,9 @@ public class REDaudience extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        tag = new apriltag(webcam1);
+
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
@@ -157,6 +165,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
+                    tag.initAprilTag(visionPortal);
                 })
                 .strafeLeft(5)
                 .lineToLinearHeading(new Pose2d(-36.5, -30.6, Math.toRadians(0)))
@@ -164,11 +173,13 @@ public class REDaudience extends LinearOpMode {
                     clawControl(0, 1);
                 })
                 .back(4)
-                .waitSeconds(10)
+                .waitSeconds(8)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                     slideMovement(1,270);
                     rotateControl(.1);
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
                 .lineToLinearHeading(new Pose2d(-46, -11, Math.toRadians(180)))
                 .forward(12)
@@ -181,17 +192,27 @@ public class REDaudience extends LinearOpMode {
                     reset();
                 })
                 .turn(Math.toRadians(180))
-                .lineToLinearHeading(new Pose2d(40, -10, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                .splineToConstantHeading(new Vector2d(30, -10), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    dist = (int) tag.calculate();
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(52.4, -38.2, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(40, -40), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    dist = (int) tag.calculate();
+                })
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(52.4, -40 + dist, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
+                    telemetry.addData("dist", dist);
                 })
                 .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
+                    telemetry.update();
                 })
                 .strafeRight(5)
                 .forward(6.2)
@@ -379,6 +400,9 @@ public class REDaudience extends LinearOpMode {
         RedPipe10.Location10 detectedColor = pipeline.getLocation();
 
         while (opModeIsActive()) {
+
+            telemetry.addData("dist", tag.calculate());
+            telemetry.update();
 
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
             pipeline.telemetry.update();

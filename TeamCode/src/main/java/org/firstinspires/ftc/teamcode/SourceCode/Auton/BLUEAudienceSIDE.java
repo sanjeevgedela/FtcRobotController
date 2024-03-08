@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.PersonalPID;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -35,6 +36,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
+    private VisionPortal visionPortal;               // Used to manage the video source.
+
     WebcamName webcam1;
     apriltag tag;
     double dist;
@@ -166,7 +169,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag();
+                    tag.initAprilTag(visionPortal);
                 })
                 .lineToLinearHeading(new Pose2d(-35, 36, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -228,7 +231,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag();
+                    tag.initAprilTag(visionPortal);
                 })
                 .lineToLinearHeading(new Pose2d(-26.2, 36.5, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -290,7 +293,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0.2);
                     clawControl(0, 0);
-                    tag.initAprilTag();
+                    tag.initAprilTag(visionPortal);
                 })
                 .strafeRight(7)
                 .lineToLinearHeading(new Pose2d(-22.2, 30.6, Math.toRadians(0)))
