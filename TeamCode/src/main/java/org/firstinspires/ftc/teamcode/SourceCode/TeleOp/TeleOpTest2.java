@@ -16,9 +16,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
@@ -62,6 +64,10 @@ public class TeleOpTest2 extends LinearOpMode {
     public Servo leftClaw = null;
     public Servo rotateClaw = null;
     public Servo plane = null;
+
+    //Define sensors
+    public DistanceSensor right_ds = null;
+    public DistanceSensor left_ds = null;
 
     double movement;
     double rotation;
@@ -249,16 +255,19 @@ public class TeleOpTest2 extends LinearOpMode {
 
         if ((gamepad2.left_trigger > 0)) {
             rightClaw.setPosition(1);
+        } else if ((gamepad2.left_trigger == 0 && rotateClaw.getPosition() > 0)) {
+            rightClaw.setPosition(0.25);
         } else {
             rightClaw.setPosition(0);
         }
         if ((gamepad2.right_trigger > 0)) {
             leftClaw.setPosition(1);
+        } else if ((gamepad2.right_trigger == 0 && rotateClaw.getPosition() > 0)) {
+            leftClaw.setPosition(0.75);
         } else {
             leftClaw.setPosition(0);
         }
     }
-
     public void rotateControl() {
         if (gamepad2.dpad_down){
             rotateClaw.setPosition(0);
@@ -338,8 +347,13 @@ public class TeleOpTest2 extends LinearOpMode {
         }
     }
 
+
     public void gamepadRumble() {
-        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && rightClaw.getPosition() > 0.15 && leftClaw.getPosition() > 0.65) {
+
+        double right_distance = right_ds.getDistance(DistanceUnit.INCH);
+        double left_distance = left_ds.getDistance(DistanceUnit.INCH);
+
+        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
             gamepad2.rumbleBlips(5);
         }
     }
