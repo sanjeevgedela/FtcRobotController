@@ -34,6 +34,8 @@ public class REDaudience extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
+    WebcamName webcam1;
+    apriltag tag;
 
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
     int target;
@@ -120,6 +122,9 @@ public class REDaudience extends LinearOpMode {
         });
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        tag = new apriltag(webcam1);
 
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
