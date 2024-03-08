@@ -264,7 +264,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0.1);
-                    slideMovement(1, 275);
+                    slideMovement(1, 200);
                 })
                 .lineToLinearHeading(new Pose2d(-43.2, -37.5, Math.toRadians(90)))
                 //.splineTo(new Vector2d(52.4,-38.4), Math.toRadians(0))
@@ -273,7 +273,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .back(4)
                 .lineToLinearHeading(new Pose2d(-58, -34, Math.toRadians(180)))
-                .forward(5.6)
+                .forward(5)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
@@ -289,7 +289,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
                 .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(48.4,-32.4, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50.4,-42, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
@@ -297,7 +297,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
                 })
-                .strafeRight(10)
+                .strafeRight(4)
                 .forward(6.2)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
@@ -306,19 +306,19 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .lineToLinearHeading(new Pose2d(24.1,-56,Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(-34,-52.5),Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(24.1,-57.5, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-34,-52.5), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(.2);
-                    slideMovement(1, 220);
-                    clawControl(1,1);
+                    slideMovement(1, 100);
+                    clawControl(0,1);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-40, -34.4), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-40, -32.4), Math.toRadians(180))
                 .waitSeconds(.3)
-                .forward(28)
+                .forward(22)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0,0);
                 })
@@ -332,7 +332,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
                 })
-                .splineToConstantHeading(new Vector2d(37.4, -32), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(37.4, -42), Math.toRadians(0))
                 .waitSeconds(0.3)
                 .forward(12)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -344,7 +344,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
                 })
-                .strafeRight(18)
+                .strafeRight(10)
                 .forward(3)
                 .waitSeconds(1)
                 .build();

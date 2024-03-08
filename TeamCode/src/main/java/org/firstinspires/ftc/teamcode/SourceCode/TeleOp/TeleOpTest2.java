@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -303,11 +304,11 @@ public class TeleOpTest2 extends LinearOpMode {
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.b) {
-            target = 1200;
+            target = 1000;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.a) {
-            target = 1800;
+            target = 1700;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.x) {
@@ -315,10 +316,10 @@ public class TeleOpTest2 extends LinearOpMode {
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.left_stick_y > 0.2) {
-            pid = pid + 0.01;
+            target = target - 20;
 
         } else if (gamepad2.left_stick_y < -0.2) {
-            pid = pid + 0.01;
+            target = target + 20;
 
         } else if (gamepad2.dpad_right){
             rotateClaw.setPosition(0.2);
@@ -334,6 +335,12 @@ public class TeleOpTest2 extends LinearOpMode {
     public void planeControl(){
         if(gamepad2.right_bumper){
             plane.setPosition(0);
+        }
+    }
+
+    public void gamepadRumble() {
+        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && rightClaw.getPosition() > 0.15 && leftClaw.getPosition() > 0.65) {
+            gamepad2.rumbleBlips(5);
         }
     }
 
@@ -417,8 +424,8 @@ public class TeleOpTest2 extends LinearOpMode {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set Ranges
-        leftClaw.scaleRange(0.5, 1);
-        rightClaw.scaleRange(0, 0.5);
+        leftClaw.scaleRange(0.65, 0.85);
+        rightClaw.scaleRange(0.15, 0.35);
         rotateClaw.scaleRange(0.65, 1);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
@@ -432,7 +439,8 @@ public class TeleOpTest2 extends LinearOpMode {
                 FtcDashboard.getInstance().startCameraStream(webcam, 120);
                 ClosestPixelX = pipeline.getCenterX();
                 pipeline.telemetry.update();
-                telemetry.addData("EncPos", rightSlide.getCurrentPosition());
+                telemetry.addData("EncPosRight", rightSlide.getCurrentPosition());
+                telemetry.addData("EncPosLeft", leftSlide.getCurrentPosition());
                 telemetry.update();
 
                 calc();
