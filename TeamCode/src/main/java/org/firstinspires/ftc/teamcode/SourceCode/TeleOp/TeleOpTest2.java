@@ -255,15 +255,11 @@ public class TeleOpTest2 extends LinearOpMode {
 
         if ((gamepad2.left_trigger > 0)) {
             rightClaw.setPosition(1);
-        } else if ((gamepad2.left_trigger == 0 && rotateClaw.getPosition() > 0)) {
-            rightClaw.setPosition(0.25);
         } else {
             rightClaw.setPosition(0);
         }
         if ((gamepad2.right_trigger > 0)) {
             leftClaw.setPosition(1);
-        } else if ((gamepad2.right_trigger == 0 && rotateClaw.getPosition() > 0)) {
-            leftClaw.setPosition(0.75);
         } else {
             leftClaw.setPosition(0);
         }
