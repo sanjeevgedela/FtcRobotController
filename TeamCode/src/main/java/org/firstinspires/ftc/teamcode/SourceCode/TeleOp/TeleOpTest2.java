@@ -367,7 +367,7 @@ public class TeleOpTest2 extends LinearOpMode {
             LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
         }
     }
-
+//
     public void limitSwitch () {
         if (limitSwitch.isPressed()) {
             rightSlide.setPower(0);
