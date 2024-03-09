@@ -34,6 +34,11 @@ public class HuskyLensTest extends LinearOpMode {
 
     private HuskyLens huskyLens;
 
+    double area = 0;
+    double max = 0;
+
+    double dist;
+
     @Override
     public void runOpMode()
     {
@@ -78,7 +83,7 @@ public class HuskyLensTest extends LinearOpMode {
          * within the OpMode by calling selectAlgorithm() and passing it one of the values
          * found in the enumeration HuskyLens.Algorithm.
          */
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_CLASSIFICATION);
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
 
         telemetry.update();
         waitForStart();
@@ -110,15 +115,23 @@ public class HuskyLensTest extends LinearOpMode {
                 telemetry.addData("Block count", blocks.length);
 
                 for (int i = 0; i < blocks.length; i++) {
+
                     if (blocks[i].id == 1) {
                         telemetry.addData("Stack detected?", "Yes");
                         telemetry.addData("X", blocks[i].x);
                         telemetry.addData("Y", blocks[i].y);
+                        area = blocks[i].x * blocks[i].y;
+                        if(area > max){
+                            max = area;
+                        }
+                        dist = blocks[i].x / 70;
+
                     } else {
                         telemetry.addData("Stack detected?", "No");
                     }
                 }
             }
+            telemetry.addData("distance in x", dist);
 //
             telemetry.update();
         }

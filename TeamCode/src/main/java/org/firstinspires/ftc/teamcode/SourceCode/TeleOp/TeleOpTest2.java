@@ -256,6 +256,19 @@ public class TeleOpTest2 extends LinearOpMode {
         if (gamepad1.y) {
             drive.turn(Math.toRadians(180));
         }
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getRawExternalHeading()))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateClaw.setPosition(0);
+                    leftClaw.setPosition(0);
+                    rightClaw.setPosition(0);
+                })
+                .splineToSplineHeading(new Pose2d(-58.2, -11.1, Math.toRadians(180)), Math.toRadians(0))
+                .build();
+
+        if(gamepad1.dpad_up){
+            drive.followTrajectorySequence(right);
+        }
     }
 
     public void clawControl() {
