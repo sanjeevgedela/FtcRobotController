@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -68,6 +70,9 @@ public class TeleOpTest2 extends LinearOpMode {
     //Define sensors
     public DistanceSensor right_ds = null;
     public DistanceSensor left_ds = null;
+    public TouchSensor limitSwitch = null;
+
+    public RevBlinkinLedDriver LED = null;
 
     double movement;
     double rotation;
@@ -94,6 +99,8 @@ public class TeleOpTest2 extends LinearOpMode {
     double y;
     double x;
     int angle;
+    double right_distance = right_ds.getDistance(DistanceUnit.INCH);
+    double left_distance = left_ds.getDistance(DistanceUnit.INCH);
     public void calc(){
         x = Math.copySign(Math.pow(-gamepad1.left_stick_y, 1), -gamepad1.left_stick_y);
         y = Math.copySign(Math.pow(-gamepad1.left_stick_x, 1), -gamepad1.left_stick_x);
@@ -346,11 +353,25 @@ public class TeleOpTest2 extends LinearOpMode {
 
     public void gamepadRumble() {
 
-        double right_distance = right_ds.getDistance(DistanceUnit.INCH);
-        double left_distance = left_ds.getDistance(DistanceUnit.INCH);
-
         if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
             gamepad2.rumbleBlips(5);
+        }
+    }
+
+    public void revLED() {
+        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
+            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        } else if ((gamepad2.left_trigger == 0 && left_distance < 3) || (gamepad2.right_trigger == 0 && right_distance < 3)) {
+            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+        } else {
+            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        }
+    }
+
+    public void limitSwitch () {
+        if (limitSwitch.isPressed()) {
+            rightSlide.setPower(0);
+            leftSlide.setPower(0);
         }
     }
 
@@ -410,6 +431,8 @@ public class TeleOpTest2 extends LinearOpMode {
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
         plane = hardwareMap.get(Servo.class, "plane");
+
+                  // LED = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 
 
         //Set Zero Power Behavior
