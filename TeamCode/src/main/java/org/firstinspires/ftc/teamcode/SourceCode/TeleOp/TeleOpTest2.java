@@ -44,14 +44,15 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
+//@Config
 @TeleOp(name="OFFICIAL")
 public class TeleOpTest2 extends LinearOpMode {
 
     private PersonalPID controller;
     int test = 0;
+    boolean limit;
 
-    public static double p = 0.006, i = 0, d = 0.0003, f = 0.0013;
+    public static double p = 0.002, i = 0, d = 0.0001, f = 0.00087;
 
     //Define motors
     public DcMotorEx leftFront = null;
@@ -61,6 +62,8 @@ public class TeleOpTest2 extends LinearOpMode {
     public DcMotorEx leftSlide = null;
     public DcMotorEx rightSlide = null;
 
+    double pid = 0;
+
     //Define servos
     public Servo rightClaw = null;
     public Servo leftClaw = null;
@@ -68,8 +71,8 @@ public class TeleOpTest2 extends LinearOpMode {
     public Servo plane = null;
 
     //Define sensors
-    public DistanceSensor right_ds = null;
-    public DistanceSensor left_ds = null;
+//    public DistanceSensor right_ds = null;
+//    public DistanceSensor left_ds = null;
     public TouchSensor limitSwitch = null;
 
     public RevBlinkinLedDriver LED = null;
@@ -99,8 +102,8 @@ public class TeleOpTest2 extends LinearOpMode {
     double y;
     double x;
     int angle;
-    double right_distance = right_ds.getDistance(DistanceUnit.INCH);
-    double left_distance = left_ds.getDistance(DistanceUnit.INCH);
+    //double right_distance = right_ds.getDistance(DistanceUnit.INCH);
+    //double left_distance = left_ds.getDistance(DistanceUnit.INCH);
     public void calc(){
         x = Math.copySign(Math.pow(-gamepad1.left_stick_y, 1), -gamepad1.left_stick_y);
         y = Math.copySign(Math.pow(-gamepad1.left_stick_x, 1), -gamepad1.left_stick_x);
@@ -308,7 +311,7 @@ public class TeleOpTest2 extends LinearOpMode {
 
         controller.setPIDF(p, i, d, f);
         int armPos = rightSlide.getCurrentPosition();
-        double pid = controller.calculate(armPos, target);
+        pid = controller.calculate(armPos, target);
         rightSlide.setPower(pid);
         leftSlide.setPower(pid);
 
@@ -325,35 +328,41 @@ public class TeleOpTest2 extends LinearOpMode {
         }
 
         if (gamepad2.y) {
-            target = 600;
-            rotateClaw.setPosition(1);
-
-        } else if (gamepad2.b) {
             target = 1000;
             rotateClaw.setPosition(1);
 
+        } else if (gamepad2.b) {
+
+            target = 1750;
+            rotateClaw.setPosition(1);
+
         } else if (gamepad2.a) {
-            target = 1700;
+
+            target = 2650;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.x) {
+
             target = 0;
             rotateClaw.setPosition(1);
 
         } else if (gamepad2.left_stick_y > 0.2) {
-            target = target - 20;
+
+            target = target - 100;
 
         } else if (gamepad2.left_stick_y < -0.2) {
-            target = target + 20;
+
+            target = target + 100;
 
         } else if (gamepad2.dpad_right){
-            rotateClaw.setPosition(0.2);
-            target = 160;
+
+            rotateClaw.setPosition(0.1);
+            target = 320;
 
         } else if (gamepad2.dpad_left){
-            rotateClaw.setPosition(0.2);
-            target = 80;
 
+            rotateClaw.setPosition(0.1);
+            target = 160;
         }
     }
 
@@ -366,27 +375,27 @@ public class TeleOpTest2 extends LinearOpMode {
 
     public void gamepadRumble() {
 
-        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
-            gamepad2.rumbleBlips(5);
-        }
+        //if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
+            //gamepad2.rumbleBlips(5);
+        //}
     }
 
     public void revLED() {
-        if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
-            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        } else if ((gamepad2.left_trigger == 0 && left_distance < 3) || (gamepad2.right_trigger == 0 && right_distance < 3)) {
-            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-        } else {
-            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-        }
+        //if (gamepad2.left_trigger == 0 && gamepad2.right_trigger == 0 && right_distance < 3 && left_distance < 3) {
+          //  LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        //} else if ((gamepad2.left_trigger == 0 && left_distance < 3) || (gamepad2.right_trigger == 0 && right_distance < 3)) {
+          //  LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+        //} else {
+          //  LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        //}
+
     }
 //
-    public void limitSwitch () {
-        if (limitSwitch.isPressed()) {
-            rightSlide.setPower(0);
-            leftSlide.setPower(0);
-        }
-    }
+//    public void limitSwitch () {
+//         while (limitSwitch.isPressed()) {
+//            pid = 0;
+//        }
+//    }
 
     @Override
     public void runOpMode () {
@@ -434,6 +443,9 @@ public class TeleOpTest2 extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightBack = hardwareMap.get(DcMotorEx.class, "rightRear");
+
+        //distance sensor
+        //limitSwitch = hardwareMap.get(TouchSensor.class, "touchy");
 
         //Define all Slide motors
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -489,6 +501,7 @@ public class TeleOpTest2 extends LinearOpMode {
                 telemetry.addData("EncPosLeft", leftSlide.getCurrentPosition());
                 telemetry.update();
 
+               // limitSwitch();
                 calc();
                 align(drive);
                 cascadinglift();
