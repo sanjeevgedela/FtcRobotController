@@ -516,7 +516,6 @@ public class TestStackAlign extends LinearOpMode {
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
 //                    alignToStack();
-<<<<<<< Updated upstream
                     alignmentStart();
                     int stackCenterX = PixelPipeline.getStackCenterX();
                     if (stackCenterX != -2) {
@@ -526,27 +525,22 @@ public class TestStackAlign extends LinearOpMode {
                     DriveConstants.MAX_ACCEL = 30;
                     DriveConstants.MAX_VEL = 30;
 
-=======
 //                    alignmentStart();
 //                    int stackCenterX = PixelPipeline.getStackCenterX();
 //                    if (stackCenterX != -2) {
 //                        alignToStack(stackCenterX);
 //                    }
                     dist = detect.method();
->>>>>>> Stashed changes
                     slideMovement(1,425);
 
 //                    alignToStack(-1);
                 })
 
-<<<<<<< Updated upstream
                 .forward(8)
-=======
                 .waitSeconds(.5)
 
                 .forward(13)
                 .splineToConstantHeading(new Vector2d(-60.60,-5 + dist), Math.toRadians(180))
->>>>>>> Stashed changes
 
 //                .waitSeconds(.5)
 //
