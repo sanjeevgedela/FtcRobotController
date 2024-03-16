@@ -51,6 +51,7 @@ public class TestStackAlign extends LinearOpMode {
     public PersonalPID controller;
 
     public HuskyStackDetection detect;
+    int dist = 0;
     private HuskyLens huskyLens;
 
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
@@ -205,6 +206,7 @@ public class TestStackAlign extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         controller = new PersonalPID(p, i, d, f);
+        detect = new HuskyStackDetection(telemetry, huskyLens);
 
         PixelPipeline PixelPipeline = new PixelPipeline(telemetry);
         RedPipe0 pipeline = new RedPipe0(telemetry);
@@ -217,6 +219,8 @@ public class TestStackAlign extends LinearOpMode {
 
         webcam.setPipeline(pipeline);
         webcam2.setPipeline(PixelPipeline);
+        detect.init(hardwareMap);
+
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -512,6 +516,7 @@ public class TestStackAlign extends LinearOpMode {
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
 //                    alignToStack();
+<<<<<<< Updated upstream
                     alignmentStart();
                     int stackCenterX = PixelPipeline.getStackCenterX();
                     if (stackCenterX != -2) {
@@ -521,12 +526,27 @@ public class TestStackAlign extends LinearOpMode {
                     DriveConstants.MAX_ACCEL = 30;
                     DriveConstants.MAX_VEL = 30;
 
+=======
+//                    alignmentStart();
+//                    int stackCenterX = PixelPipeline.getStackCenterX();
+//                    if (stackCenterX != -2) {
+//                        alignToStack(stackCenterX);
+//                    }
+                    dist = detect.method();
+>>>>>>> Stashed changes
                     slideMovement(1,425);
 
 //                    alignToStack(-1);
                 })
 
+<<<<<<< Updated upstream
                 .forward(8)
+=======
+                .waitSeconds(.5)
+
+                .forward(13)
+                .splineToConstantHeading(new Vector2d(-60.60,-5 + dist), Math.toRadians(180))
+>>>>>>> Stashed changes
 
 //                .waitSeconds(.5)
 //
