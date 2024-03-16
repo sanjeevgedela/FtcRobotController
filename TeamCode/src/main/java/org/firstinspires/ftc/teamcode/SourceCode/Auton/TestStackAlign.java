@@ -499,7 +499,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    readyPick();
                 })
 
-                .splineToConstantHeading(new Vector2d(-53.60,-2), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
 
 //                .lineToConstantHeading(new Vector2d(-53.60,-8))
 
@@ -510,7 +510,7 @@ public class TestStackAlign extends LinearOpMode {
                     if (stackCenterX != -2) {
                         alignToStack(stackCenterX);
                     }
-                    slideMovement(1,450);
+                    slideMovement(1,425);
 
 //                    alignToStack(-1);
                 })
@@ -531,7 +531,7 @@ public class TestStackAlign extends LinearOpMode {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(1,0);
+                    clawControl(0,0);
                 })
 
                 .waitSeconds(.4)
@@ -559,6 +559,7 @@ public class TestStackAlign extends LinearOpMode {
                 })
 
                 .waitSeconds(.3)
+                .back(3)
 
 //                .back(25)
 //
@@ -582,7 +583,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    readyPick();
                 })
 
-                .splineToConstantHeading(new Vector2d(-53.60,-7), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53.60,-2), Math.toRadians(180))
 
 //                .lineToConstantHeading(new Vector2d(-53.60,-8))
 
@@ -642,7 +643,8 @@ public class TestStackAlign extends LinearOpMode {
                     scorePositionMid();
                 })
 
-                .waitSeconds(.3)
+                .waitSeconds(.5)
+                .back(3)
 
 //                .back(25)
 //
