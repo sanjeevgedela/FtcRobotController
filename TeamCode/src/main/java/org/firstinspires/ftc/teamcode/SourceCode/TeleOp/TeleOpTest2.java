@@ -255,8 +255,13 @@ public class TeleOpTest2 extends LinearOpMode {
         rightFront.setPower(ratio * rf);
         rightBack.setPower(ratio * rb);
 
-        if (gamepad1.y) {
-            drive.turn(Math.toRadians(180));
+        TrajectorySequence stackPreset = drive.trajectorySequenceBuilder(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getRawExternalHeading()))
+        .splineToConstantHeading(new Vector2d(-53.60,-7), Math.toRadians(180))
+                .build();
+
+
+        if (gamepad1.dpad_up) {
+            drive.followTrajectorySequence(stackPreset);
         }
     }
 
