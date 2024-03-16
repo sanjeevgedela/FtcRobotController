@@ -547,7 +547,7 @@ public class TestStackAlign extends LinearOpMode {
                     scorePositionLow();
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(44, -46.87, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(40, -46.87, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,1);
                 })
