@@ -11,7 +11,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class TeleopCommands {
 
-    PixelPipeline pipeline;
     Equipment equip;
 
     public TeleopCommands(Equipment e) {equip = e;}
