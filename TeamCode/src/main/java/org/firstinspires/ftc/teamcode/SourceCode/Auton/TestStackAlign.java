@@ -144,12 +144,12 @@ public class TestStackAlign extends LinearOpMode {
         // 640 = width of camera
         double ALIGNMENT_THRESHOLD = 4;
         int stackCenterX = -1;
-        double lateralDistance = 640 / 3.5 - stackCenterX;
-        double lateralVelocity = -lateralDistance * 3 / 640;
+        double lateralDistance = 640 / 4 - stackCenterX;
+        double lateralVelocity = -lateralDistance * 3.5 / 640;
         if (Math.abs(lateralDistance) < ALIGNMENT_THRESHOLD) {
-            drive.setMotorPowers(0, 0, 0, 0);
+            drive.setMotorPowers(-1, 0, -1, 0);
         } else {
-            drive.setMotorPowers(lateralVelocity, -lateralVelocity, lateralVelocity, -lateralVelocity);
+            drive.setMotorPowers(-lateralVelocity, lateralVelocity, -lateralVelocity, lateralVelocity);
         }
 
 //            double lateralVelocity = -lateralDistance * 1.5 / 640;
@@ -377,7 +377,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    readyPick();
                 })
 
-                .splineToConstantHeading(new Vector2d(-53.60,-8), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53.60,-7), Math.toRadians(180))
 
 //                .lineToConstantHeading(new Vector2d(-53.60,-8))
 
@@ -387,7 +387,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    alignToStack();
                     alignmentStart();
                     int stackCenterX = PixelPipeline.getStackCenterX();
-                    if (stackCenterX != -1) {
+                    if (stackCenterX != -2) {
                         alignToStack(stackCenterX);
                     }
 //                    alignToStack(-1);
@@ -395,7 +395,7 @@ public class TestStackAlign extends LinearOpMode {
 
                 .waitSeconds(1)
 
-                .forward(8)
+                .forward(13)
 
 //                .lineToConstantHeading(new Vector2d(-64,-4.2))
 
