@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.util.NanoClock;
+import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,16 +33,18 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@Autonomous(name = "REDbackdrop")
-public class REDbackdrop extends LinearOpMode {
+@Autonomous(name = "TestStackAlign")
+public class TestStackAlign extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
 
     public OpenCvCamera webcam;
+    public OpenCvCamera webcam2;
 
     public PersonalPID controller;
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
@@ -85,6 +90,10 @@ public class REDbackdrop extends LinearOpMode {
         rightClaw.setPosition(right);
     }
 
+    public void wristDown(){
+        rotateControl(0);
+    }
+
     public void scorePositionLow() {
         rightSlide.setTargetPosition(800);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -95,30 +104,130 @@ public class REDbackdrop extends LinearOpMode {
         rotateControl(1);
     }
 
-    public void scorePositionMid() {
-        rightSlide.setTargetPosition(1440);
+    public void readyPick() {
+        rightSlide.setTargetPosition(400);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        rightSlide.setTargetPosition(1440);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setTargetPosition(400);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
 
+    public void slamDown() {
+        rightSlide.setTargetPosition(210);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(210);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+    }
+
+    public void scorePositionMid() {
+        rightSlide.setTargetPosition(1440);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(1440);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rotateControl(1);
+    }
+
+    public void alignToStack(int StackCenterX) {
+
+        // TEST 3
+        PixelPipeline PixelPipeline = new PixelPipeline(telemetry);
+        webcam2.setPipeline(PixelPipeline);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+
+        // 640 = width of camera
+        double ALIGNMENT_THRESHOLD = 4;
+        int stackCenterX = -1;
+        double lateralDistance = 640 / 3.5 - stackCenterX;
+        double lateralVelocity = -lateralDistance * 3 / 640;
+        if (Math.abs(lateralDistance) < ALIGNMENT_THRESHOLD) {
+            drive.setMotorPowers(0, 0, 0, 0);
+        } else {
+            drive.setMotorPowers(lateralVelocity, -lateralVelocity, lateralVelocity, -lateralVelocity);
+        }
+
+//            double lateralVelocity = -lateralDistance * 1.5 / 640;
+//            drive.setMotorPowers(lateralVelocity, lateralVelocity, -lateralVelocity, -lateralVelocity);
+
+        // TEST 2
+//        PixelPipeline PixelPipeline = new PixelPipeline(telemetry);
+//        webcam2.setPipeline(PixelPipeline);
+//
+//        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//
+//
+//        double ANGLE_TO_DISTANCE_FACTOR = -2;
+//        double STRAFE_POWER = -1;
+//
+//        double correction = PixelPipeline.getPotentialAngle() * ANGLE_TO_DISTANCE_FACTOR;
+//        if (correction > 1) {
+//            drive.setDrivePower(new Pose2d(0, STRAFE_POWER, 0));
+//        } else if (correction < 1) {
+//            drive.setDrivePower(new Pose2d(0, STRAFE_POWER, 0));
+//        } else {
+//            drive.setDrivePower(new Pose2d(0, STRAFE_POWER, 0));
+//        }
+
+        // TEST 1
+//        double ANGLE_THRESHOLD = 1.0;
+//
+//        while (Math.abs(PixelPipeline.getPotentialAngle()) > ANGLE_THRESHOLD) {
+//            correction = PixelPipeline.getPotentialAngle() * ANGLE_TO_DISTANCE_FACTOR;
+//            drive.setPoseEstimate(drive.getPoseEstimate().plus(new Pose2d(0,correction, 180)));
+//            drive.update();
+//        }
+    }
+
+    public void alignmentStart() {
+
+        PixelPipeline PixelPipeline = new PixelPipeline(telemetry);
+        webcam2.setPipeline(PixelPipeline);
+
+        int stackCenterX = PixelPipeline.getStackCenterX();
+
+        if (stackCenterX != -1) {
+            alignToStack(stackCenterX);
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
         controller = new PersonalPID(p, i, d, f);
 
+        PixelPipeline PixelPipeline = new PixelPipeline(telemetry);
         RedPipe0 pipeline = new RedPipe0(telemetry);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId2 = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId2", "id", hardwareMap.appContext.getPackageName());
+
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId2);
+
         webcam.setPipeline(pipeline);
+        webcam2.setPipeline(PixelPipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
+        webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam2.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -158,6 +267,7 @@ public class REDbackdrop extends LinearOpMode {
         double parkStrafe = 25;
         DriveConstants.MAX_VEL = 73;
         DriveConstants.MAX_ACCEL = 73;
+
 
         Pose2d startPose = new Pose2d(9.4, -62.4, Math.toRadians(90));
 
@@ -227,20 +337,20 @@ public class REDbackdrop extends LinearOpMode {
                 .forward(5)
                 .build();
 
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(10.4, -62.4, Math.toRadians(90)))
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(14.03, -62.82, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(6, -29.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(4, -29.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .waitSeconds(0.3)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionLow( );
+                    scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(45.4, -27.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(43.9, -25.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
@@ -248,10 +358,107 @@ public class REDbackdrop extends LinearOpMode {
                 .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
+                    rotateControl(1);
+                    clawControl(0,0);
                 })
-                .strafeRight(25)
+
+                //Cycle Period
+
+//                .splineToLinearHeading(new Pose2d(-33.57, -8.08, Math.toRadians(180)), Math.toRadians(0))
+
+                .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(-33.57,-8.08))
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(0);
+                    clawControl(1,1);
+//                    readyPick();
+                })
+
+                .splineToConstantHeading(new Vector2d(-53.60,-8), Math.toRadians(180))
+
+//                .lineToConstantHeading(new Vector2d(-53.60,-8))
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    alignToStack();
+                    alignmentStart();
+                    int stackCenterX = PixelPipeline.getStackCenterX();
+                    if (stackCenterX != -1) {
+                        alignToStack(stackCenterX);
+                    }
+//                    alignToStack(-1);
+                })
+
                 .waitSeconds(1)
-                .forward(5)
+
+                .forward(8)
+
+//                .lineToConstantHeading(new Vector2d(-64,-4.2))
+
+//                .strafeRight(0.5)
+//                .forward(1.5)
+
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    wristDown();
+//                    slamDown();
+//                })
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(1,0);
+                })
+
+                .waitSeconds(1)
+
+                .back(10)
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+
+                .lineToLinearHeading(new Pose2d(4.10, -9.47, Math.toRadians(0)))
+                .splineTo(new Vector2d(38, -46.87), Math.toRadians(0))
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(1);
+                    scorePositionLow();
+                    clawControl(0,0);
+                })
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(0,1);
+                })
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    scorePositionMid();
+                })
+
+                .waitSeconds(1)
+
+                .back(25)
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+
+                .splineToLinearHeading(new Pose2d(50, -64, Math.toRadians(180)), Math.toRadians(0))
+
+
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
@@ -260,8 +467,12 @@ public class REDbackdrop extends LinearOpMode {
                 .build();
 
         while (opModeInInit()){
+
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
             pipeline.telemetry.update();
+
+            FtcDashboard.getInstance().startCameraStream(webcam2, 120);
+            PixelPipeline.telemetry.update();
         }
 
         waitForStart();
@@ -270,7 +481,9 @@ public class REDbackdrop extends LinearOpMode {
 
         while (opModeIsActive()) {
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
+            FtcDashboard.getInstance().startCameraStream(webcam2, 120);
             pipeline.telemetry.update();
+            PixelPipeline.telemetry.update();
             controller.setPIDF(p, i, d, f);
             int armPos = rightSlide.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
@@ -369,59 +582,161 @@ public class REDbackdrop extends LinearOpMode {
         }
     }
 
-    public static class pixelpipeline extends OpenCvPipeline {
-        Telemetry telemetry;
-        private Scalar lowerBound = new Scalar(0, 0, 200); // Lower bound for white color in HSV
-        private Scalar upperBound = new Scalar(180, 30, 255); // Upper bound for white color in HSV
-        public static int closestPixelX;
 
-        public pixelpipeline(Telemetry t) {telemetry = t;}
+
+    public class PixelPipeline extends OpenCvPipeline {
+
+        Telemetry telemetry;
+        private Scalar lowerBound = new Scalar(0, 0, 200);
+        private Scalar upperBound = new Scalar(180, 30, 255);
+
+        // TEST 3
+        int stackCenterX = -1; // X-coordinate of center of stack
+
+
+        // TEST 1 && 2
+//        int midx = 320;
+//        int potentialAngle = 0;
+
+        public PixelPipeline(Telemetry t) {
+            telemetry = t;
+        }
+
+
         @Override
         public Mat processFrame(Mat input) {
-            // Convert the input frame to the HSV color space
-            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
 
-            // Threshold the image to find pixels within the specified color range
-            Core.inRange(input, lowerBound, upperBound, input);
+            // TEST 3
+            Mat hsvImage = new Mat();
+            Imgproc.cvtColor(input, hsvImage, Imgproc.COLOR_RGB2HSV);
 
-            // Find contours in the binary image
+            Mat mask = new Mat();
+            Core.inRange(hsvImage, lowerBound, upperBound, mask);
+
             List<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
-            Imgproc.findContours(input, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            List<Integer> areas = new ArrayList<>();
-            List<Integer> MidX = new ArrayList<>();
-            int midx = 15;
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            // Iterate through the contours and draw rectangles around them
+            double maxArea = 0;
+            Rect maxRect = new Rect();
             for (MatOfPoint contour : contours) {
-                MatOfPoint2f approxCurve = new MatOfPoint2f();
-                MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
-
-                // Approximate the contour with a polygon
-                double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
-                Imgproc.approxPolyDP(contour2f, approxCurve, epsilon, true);
-
-                // Convert the polygon to a bounding rectangle
-                Rect rect = Imgproc.boundingRect(new MatOfPoint(approxCurve.toArray()));
-
-                // Draw a rectangle around the detected region
-                Imgproc.rectangle(input, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0), 2);
-                areas.add(rect.width * rect.height);
-                MidX.add(rect.x + rect.width/2);
-            }
-
-            for (int i = 0; i < areas.size(); i++){
-                int max = 0;
-
-                if (areas.get(i) > max){
-                    max = areas.get(i);
-                    midx = MidX.get(i);
-
+                double area = Imgproc.contourArea(contour);
+                if (area > maxArea) {
+                    maxArea = area;
+                    maxRect = Imgproc.boundingRect(contour);
                 }
             }
-            Imgproc.line(input, new Point(midx-5,0), new Point(midx+5,0), new Scalar(255,255,255));
-            // Return the processed frame
+
+            stackCenterX = maxRect.x + maxRect.width / 2;
+
+            // Create box
+            Imgproc.rectangle(input, new Point(200, 40), new Point(430, 240), new Scalar(255, 0, 0), 2);
+
+            Imgproc.line(input, new Point(stackCenterX, 0), new Point(stackCenterX, input.rows()), new Scalar(0, 255, 0), 2);
+            Imgproc.line(input, new Point(stackCenterX - 10, input.rows() / 2), new Point(stackCenterX + 10, input.rows() / 2), new Scalar(0, 255, 0), 2);
+
+            hsvImage.release();
+            mask.release();
+
             return input;
+
+
+            //TEST 2
+//            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
+//
+//            Core.inRange(input, lowerBound, upperBound, input);
+//
+//            List<MatOfPoint> contours = new ArrayList<>();
+//            Mat hierarchy = new Mat();
+//            Imgproc.findContours(input, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//            List<Integer> areas = new ArrayList<>();
+//            List<Integer> MidX = new ArrayList<>();
+//
+//            for (MatOfPoint contour : contours) {
+//                MatOfPoint2f approxCurve = new MatOfPoint2f();
+//                MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+//
+//                double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
+//                Imgproc.approxPolyDP(contour2f, approxCurve, epsilon, true);
+//
+//                Rect rect = Imgproc.boundingRect(new MatOfPoint(approxCurve.toArray()));
+//
+//                areas.add(rect.width * rect.height);
+//                MidX.add(rect.x + rect.width / 2);
+//            }
+//
+//            if (!areas.isEmpty()) {
+//                int BOX_WIDTH = 20;
+//                int maxIndex = areas.indexOf(Collections.max(areas));
+//                Rect maxRect = Imgproc.boundingRect(new MatOfPoint2f(contours.get(maxIndex).toArray()));
+//                Imgproc.rectangle(input, maxRect.tl(), maxRect.br(), new Scalar(255, 0, 0), 2);
+//                midx = maxRect.x + maxRect.width - BOX_WIDTH;
+//            }
+//
+//            Imgproc.line(input, new Point(midx, 235), new Point(midx, 245), new Scalar(0, 0, 255), 5);
+//
+//            potentialAngle = ((midx - 360) / 15);
+//            telemetry.addData("angle", potentialAngle);
+//
+//            return input;
         }
+
+        // TEST 1
+
+//        public Mat processFrame(Mat input) {
+//            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
+//
+//            Core.inRange(input, lowerBound, upperBound, input);
+//
+//            List<MatOfPoint> contours = new ArrayList<>();
+//            Mat hierarchy = new Mat();
+//            Imgproc.findContours(input, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//            List<Integer> areas = new ArrayList<>();
+//            List<Integer> MidX = new ArrayList<>();
+//
+//            for (MatOfPoint contour : contours) {
+//                MatOfPoint2f approxCurve = new MatOfPoint2f();
+//                MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+//
+//                double epsilon = 0.02 * Imgproc.arcLength(contour2f, true);
+//                Imgproc.approxPolyDP(contour2f, approxCurve, epsilon, true);
+//
+//                Rect rect = Imgproc.boundingRect(new MatOfPoint(approxCurve.toArray()));
+//
+//                areas.add(rect.width * rect.height);
+//                MidX.add(rect.x + rect.width / 2);
+//            }
+//
+//            Imgproc.line(input, new Point(midx, 235), new Point(midx, 245), new Scalar(0, 0, 255), 5);
+//
+//            if (!areas.isEmpty()) {
+//                int maxIndex = areas.indexOf(Collections.max(areas));
+//                Rect maxRect = Imgproc.boundingRect(new MatOfPoint2f(contours.get(maxIndex).toArray()));
+//                Imgproc.rectangle(input, maxRect.tl(), maxRect.br(), new Scalar(255, 0, 0), 2);
+//                midx = maxRect.x + maxRect.width / 2;
+//            }
+//
+//            potentialAngle = ((midx - 360) / 15);
+//            telemetry.addData("angle", potentialAngle);
+//
+//            return input;
+//        }
+
+        // TEST 1&2
+
+//        public Integer getPotentialAngle() {
+//            return potentialAngle;
+//        }
+//
+//        public void resetMidx() {
+//            midx = 320;
+//        }
+
+        // TEST 3
+        public int getStackCenterX() {
+            return stackCenterX;
+        }
+
     }
+
 }

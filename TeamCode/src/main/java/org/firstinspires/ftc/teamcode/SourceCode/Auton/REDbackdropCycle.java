@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SourceCode.Auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,8 +33,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "REDbackdrop")
-public class REDbackdrop extends LinearOpMode {
+@Autonomous(name = "REDbackdropCycle")
+public class REDbackdropCycle extends LinearOpMode {
 
     //Define motors
     public DcMotorEx leftSlide;
@@ -85,6 +86,10 @@ public class REDbackdrop extends LinearOpMode {
         rightClaw.setPosition(right);
     }
 
+    public void wristDown(){
+        rotateControl(0);
+    }
+
     public void scorePositionLow() {
         rightSlide.setTargetPosition(800);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -95,12 +100,31 @@ public class REDbackdrop extends LinearOpMode {
         rotateControl(1);
     }
 
+    public void readyPick() {
+        rightSlide.setTargetPosition(400);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(400);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        rotateControl(1);
+    }
+
+    public void slamDown() {
+        rightSlide.setTargetPosition(170);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+        leftSlide.setTargetPosition(170);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftControl(1);
+    }
+
     public void scorePositionMid() {
         rightSlide.setTargetPosition(1440);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        rightSlide.setTargetPosition(1440);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setTargetPosition(1440);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
     }
@@ -227,20 +251,20 @@ public class REDbackdrop extends LinearOpMode {
                 .forward(5)
                 .build();
 
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(10.4, -62.4, Math.toRadians(90)))
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(14.03, -62.82, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
                 })
-                .lineToLinearHeading(new Pose2d(6, -29.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(4, -29.6, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
                 .waitSeconds(0.3)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionLow( );
+                    scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(45.4, -27.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(43.9, -25.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
@@ -248,10 +272,87 @@ public class REDbackdrop extends LinearOpMode {
                 .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
+                    rotateControl(1);
+                    clawControl(0,0);
                 })
-                .strafeRight(25)
+
+                //Cycle Period
+                .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
+
+                .lineToConstantHeading(new Vector2d(-33.57,-8.08))
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(1);
+                    clawControl(1,1);
+                    readyPick();
+                })
+
+                .lineToConstantHeading(new Vector2d(-65.5,-7.4))
+
                 .waitSeconds(1)
-                .forward(5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    wristDown();
+                    slamDown();
+                })
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(1,0);
+                })
+
+                .waitSeconds(1)
+
+                .back(10)
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+
+                .lineToLinearHeading(new Pose2d(16.27, -5.69, Math.toRadians(0)))
+
+                .lineToConstantHeading(new Vector2d(17.26,-41.01))
+
+                .lineToConstantHeading(new Vector2d(40,-46.65))
+
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(1);
+                    scorePositionLow();
+                    clawControl(0,0);
+                })
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(0,1);
+                })
+
+                .waitSeconds(0.5)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    scorePositionMid();
+                })
+
+                .waitSeconds(1)
+
+                .back(20)
+
+                .waitSeconds(1)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+
+                .lineToLinearHeading(new Pose2d(48.76, -69.17, Math.toRadians(180)))
+
                 .build();
 
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
