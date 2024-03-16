@@ -467,45 +467,46 @@ public class TestStackAlign extends LinearOpMode {
 
                 .build();
 
-        TrajectorySequence left2 = drive.trajectorySequenceBuilder(new Pose2d(14.03, -62.82, Math.toRadians(90)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0);
-                    clawControl(0, 0);
-                })
-                .lineToLinearHeading(new Pose2d(4, -29.6, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, 1);
-                })
-                .waitSeconds(0.1)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionLow();
-                })
-                .lineToLinearHeading(new Pose2d(43.9, -25.2, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(1, 0);
-                })
-                .waitSeconds(0.1)
-                .back(7)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
-                    rotateControl(1);
-                    clawControl(0,0);
-                })
+        TrajectorySequence left2 = drive.trajectorySequenceBuilder(new Pose2d(-39.31, -18.51, Math.toRadians(90)))
+                // x= 14.03 y= -62.8
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    rotateControl(0);
+//                    clawControl(0, 0);
+//                })
+//                .lineToLinearHeading(new Pose2d(4, -29.6, Math.toRadians(180)))
+//                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+//                    clawControl(0, 1);
+//                })
+//                .waitSeconds(0.1)
+//                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+//                    scorePositionLow();
+//                })
+//                .lineToLinearHeading(new Pose2d(43.9, -25.2, Math.toRadians(0)))
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    clawControl(1, 0);
+//                })
+//                .waitSeconds(0.1)
+//                .back(7)
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    reset();
+//                    rotateControl(1);
+//                    clawControl(0,0);
+//                })
 
                 //Cycle Period
 
 //                .splineToLinearHeading(new Pose2d(-33.57, -8.08, Math.toRadians(180)), Math.toRadians(0))
 
-                .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(-33.57,-8.08), Math.toRadians(180))
+//                .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
+//                .splineToConstantHeading(new Vector2d(-33.57,-8.08), Math.toRadians(180))
+//
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    rotateControl(0);
+//                    clawControl(1,1);
+////                    readyPick();
+//                })
 
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0);
-                    clawControl(1,1);
-//                    readyPick();
-                })
-
-                .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
+//                .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
 
 //                .lineToConstantHeading(new Vector2d(-53.60,-8))
 
@@ -516,17 +517,23 @@ public class TestStackAlign extends LinearOpMode {
                     if (stackCenterX != -2) {
                         alignToStack(stackCenterX);
                     }
+
+                    DriveConstants.MAX_ACCEL = 30;
+                    DriveConstants.MAX_VEL = 30;
+
                     slideMovement(1,425);
 
 //                    alignToStack(-1);
                 })
 
-                .waitSeconds(.5)
+                .forward(8)
 
-                .forward(13)
-
+//                .waitSeconds(.5)
+//
+//                .forward(13)
+//
 //                .lineToConstantHeading(new Vector2d(-64,-4.2))
-
+//
 //                .strafeRight(0.5)
 //                .forward(1.5)
 

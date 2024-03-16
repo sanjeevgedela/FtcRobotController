@@ -144,6 +144,12 @@ public class teztslidztele extends LinearOpMode {
                         .forward(14)
                         .build();
 
+                TrajectorySequence redBackdrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+
+                        .splineToLinearHeading(new Pose2d(-52, 55, Math.toRadians(90)), Math.toRadians(0))
+
+                        .build();
+
                 ClosestPixelX = pipeline.getCenterX();
 
                 if(ClosestPixelX > FrameCenterX){
