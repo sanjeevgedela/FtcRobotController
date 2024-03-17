@@ -507,12 +507,14 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(1,1);
+                    slideMovement(1,475);
 //                    readyPick();
                 })
+
 //
                 .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
-//
-                .lineToConstantHeading(new Vector2d(-53.60,-8))
+//                    slideMovement(1,315);
+
 //
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
 //                    alignToStack();
@@ -531,8 +533,10 @@ public class TestStackAlign extends LinearOpMode {
 //                        alignToStack(stackCenterX);
 //                    }
                     dist = detect.method();
-                    slideMovement(1,380);
                     telemetry.addData("dist", dist);
+                    slideMovement(1,450);
+                    DriveConstants.MAX_ACCEL = 15;
+                    DriveConstants.MAX_VEL = 15;
 
 //                    alignToStack(-1);
                 })
@@ -541,6 +545,9 @@ public class TestStackAlign extends LinearOpMode {
                 .forward(3)
 
                 .splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
+                .waitSeconds(.5)
+                .strafeRight(dist + .0001)
+                .forward(10)
 
                 .waitSeconds(.1)
 
@@ -554,9 +561,14 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                     telemetry.update();
+                    DriveConstants.MAX_ACCEL = 73;
+                    DriveConstants.MAX_VEL = 73;
                 })
 
-                .waitSeconds(.4)
+                .waitSeconds(.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(1);
+                })
                 .back(10)
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
@@ -566,10 +578,10 @@ public class TestStackAlign extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(4.10, -9.47), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(1);
-                    scorePositionLow();
+                    slideMovement(1,1500);
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(40, -46.87, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(42, -46.87, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,1);
                 })
@@ -597,11 +609,13 @@ public class TestStackAlign extends LinearOpMode {
 //                .splineToLinearHeading(new Pose2d(-33.57, -8.08, Math.toRadians(180)), Math.toRadians(0))
 
                 .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(-33.57,-8.08), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-33.57,-5), Math.toRadians(180))
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(1,1);
+                    slideMovement(1,400);
+
 //                    readyPick();
                 })
 
@@ -616,16 +630,19 @@ public class TestStackAlign extends LinearOpMode {
 //                    if (stackCenterX != -2) {
 //                        alignToStack(stackCenterX);
 //                    }
-                    slideMovement(1,260);
                     dist = detect.method();
                     telemetry.addData("dist", dist);
+                    slideMovement(1,400);
+                    DriveConstants.MAX_ACCEL = 15;
+                    DriveConstants.MAX_VEL = 15;
 
 //                    alignToStack(-1);
                 })
 
-                .waitSeconds(.3)
-
-                .splineToConstantHeading(new Vector2d(-60.60,-5 + dist), Math.toRadians(180))
+                .waitSeconds(.6)
+                .strafeRight(dist + .0001)
+                .forward(10)
+//                .lineToLinearHeading(new Pose2d(-65.60,-4 + dist, Math.toRadians(180)))
 
 //                .lineToConstantHeading(new Vector2d(-64,-4.2))
 
@@ -639,11 +656,16 @@ public class TestStackAlign extends LinearOpMode {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    clawControl(1,0);
+                    clawControl(0,0);
                     telemetry.update();
+                    DriveConstants.MAX_ACCEL = 73;
+                    DriveConstants.MAX_VEL = 73;
                 })
 
                 .waitSeconds(.4)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(1);
+                })
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -651,13 +673,13 @@ public class TestStackAlign extends LinearOpMode {
                 .back(10)
 
 
-                .splineToConstantHeading(new Vector2d(4.10, -9.47), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(4.10, -3), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(1);
                     scorePositionLow();
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(44, -46.87, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(41 , -41.87, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,1);
                 })
