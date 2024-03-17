@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.SourceCode.Auton.REDbackdrop;
@@ -69,6 +70,7 @@ public class teztslidztele extends LinearOpMode {
 
     public ColorSensor colorSensor = null;
 
+    public DistanceSensor distance = null;
 
     double movement;
     double rotation;
@@ -104,7 +106,7 @@ public class teztslidztele extends LinearOpMode {
 
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
 
-        telemetry.addData("mode", currentMode);
+//        telemetry.addData("mode", currentMode);
 
         switch (currentMode) {
             case NORMAL_CONTROL:
@@ -142,12 +144,6 @@ public class teztslidztele extends LinearOpMode {
                 TrajectorySequence now = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .turn(Math.toRadians(angle))
                         .forward(14)
-                        .build();
-
-                TrajectorySequence redBackdrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-
-                        .splineToLinearHeading(new Pose2d(-52, 55, Math.toRadians(90)), Math.toRadians(0))
-
                         .build();
 
                 ClosestPixelX = pipeline.getCenterX();
@@ -203,9 +199,9 @@ public class teztslidztele extends LinearOpMode {
         rightFront.setPower(ratio * rf);
         rightBack.setPower(ratio * rb);
 
-        if (gamepad1.y) {
-            drive.turn(Math.toRadians(180));
-        }
+//        if (gamepad1.y) {
+//            drive.turn(Math.toRadians(180));
+//        }
 
     }
 
@@ -242,27 +238,78 @@ public class teztslidztele extends LinearOpMode {
         double power = -gamepad2.left_stick_y;
 
         if (Math.abs(power) < 0.1) {
+            rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightSlide.setPower(0);
             leftSlide.setPower(0);
         } else {
+            rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightSlide.setPower(power);
             leftSlide.setPower(power);
         }
 
-//        if(gamepad2.left_stick_y > 0.1){
-//            rightSlide.setPower(-1);
-//            leftSlide.setPower(-1);
+        if(gamepad2.y){
+            rightSlide.setTargetPosition(315);
+            leftSlide.setTargetPosition(315);
+            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightSlide.setPower(1);
+            leftSlide.setPower(1);
+        } else if (gamepad2.b) {
+            rightSlide.setTargetPosition(185);
+            leftSlide.setTargetPosition(185);
+            rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightSlide.setPower(1);
+            leftSlide.setPower(1);
+        }
+
+//        if (gamepad2.b) {
+//            if (distance.getDistance(DistanceUnit.MM) > 98) {
+//                rightSlide.setPower(-1);
+//                leftSlide.setPower(-1);
+//            } else if (distance.getDistance(DistanceUnit.MM) < 98) {
+//                rightSlide.setPower(1);
+//                leftSlide.setPower(1);
+//            } else {
+//                leftSlide.setPower(0);
+//                rightSlide.setPower(0);
+//            }
+//        }
 //
-//        }else if(-gamepad2.left_stick_y > 0.1){
-//            rightSlide.setPower(1);
-//            leftSlide.setPower(1);
-//        }else {
-//            rightSlide.setPower(0);
-//            leftSlide.setPower(0);
+//        if (gamepad2.x) {
+//            if (distance.getDistance(DistanceUnit.MM) > 60) {
+//                rightSlide.setPower(-1);
+//                leftSlide.setPower(-1);
+//            } else if (distance.getDistance(DistanceUnit.MM) < 60) {
+//                rightSlide.setPower(1);
+//                leftSlide.setPower(1);
+//            } else {
+//                leftSlide.setPower(0);
+//                rightSlide.setPower(0);
+//            }
+//        }
+//
+//        if (gamepad2.a) {
+//            if (distance.getDistance(DistanceUnit.MM) > 22) {
+//                rightSlide.setPower(-1);
+//                leftSlide.setPower(-1);
+//            } else if (distance.getDistance(DistanceUnit.MM) < 2) {
+//                rightSlide.setPower(1);
+//                leftSlide.setPower(1);
+//            } else {
+//                leftSlide.setPower(0);
+//                rightSlide.setPower(0);
+//            }
 //        }
     }
 
@@ -317,6 +364,8 @@ public class teztslidztele extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
         plane = hardwareMap.get(Servo.class, "plane");
 
+        distance = hardwareMap.get(DistanceSensor.class, "distance");
+
         // LED = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -333,7 +382,7 @@ public class teztslidztele extends LinearOpMode {
 
         leftClaw.scaleRange(0.55, 1);
         rightClaw.scaleRange(0.15, 0.4);
-        rotateClaw.scaleRange(0.65, 1);
+        rotateClaw.scaleRange(0.7, 1);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
@@ -346,8 +395,10 @@ public class teztslidztele extends LinearOpMode {
                 FtcDashboard.getInstance().startCameraStream(webcam, 120);
                 ClosestPixelX = pipeline.getCenterX();
                 pipeline.telemetry.update();
-                telemetry.addData("EncPosRight", rightSlide.getCurrentPosition());
-                telemetry.addData("EncPosLeft", leftSlide.getCurrentPosition());
+                telemetry.addData("PosRight", rightSlide.getCurrentPosition());
+                telemetry.addData("PosLeft", leftSlide.getCurrentPosition());
+                telemetry.addData("Distance", distance.getDistance(DistanceUnit.MM));
+                telemetry.addData("mode", currentMode);
                 telemetry.update();
 
                 calc();
@@ -412,7 +463,7 @@ public class teztslidztele extends LinearOpMode {
 
             // Return the processed frame
             potentialAngle = ((midx - 360) / 15);
-            telemetry.addData("angle", potentialAngle);
+//            telemetry.addData("angle", potentialAngle);
 
             return input;
         }
