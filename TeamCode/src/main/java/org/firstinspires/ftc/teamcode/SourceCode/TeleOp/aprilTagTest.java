@@ -120,6 +120,7 @@ public class aprilTagTest extends LinearOpMode {
 
         webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
         tag = new apriltag(webcam1);
+
         if(opModeInInit()) {
                 tag.initAprilTag(visionPortal);
         }
