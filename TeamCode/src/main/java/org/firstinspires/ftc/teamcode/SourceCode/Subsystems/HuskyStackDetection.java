@@ -67,7 +67,7 @@ public class HuskyStackDetection {
                     if(area > max){
                         max = area;
                     }
-                    dist = (blocks[i].x - 220)/ 60;
+                    dist = (blocks[i].x - 220)/ 35;
 
                 } else {
                     telemetry.addData("Stack detected?", "No");

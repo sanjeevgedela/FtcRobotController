@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.PersonalPID;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -35,6 +36,11 @@ public class REDaudienceSIDE extends LinearOpMode {
     public DcMotorEx leftSlide;
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
+    private VisionPortal visionPortal;
+    int dist;
+    apriltag tag;
+    WebcamName webcam1;
+
 
 
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
@@ -108,6 +114,8 @@ public class REDaudienceSIDE extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);
 
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        tag = new apriltag(webcam1);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -162,6 +170,7 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
+                    tag.initAprilTag(visionPortal);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0.2);
@@ -189,6 +198,8 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .back(5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.RED);
+                    tag.findTag(telemetry);
                 })
                 //.waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-45,-58.5,Math.toRadians(0)))
@@ -196,9 +207,12 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
-                .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
-                .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(47.4,-41.3, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(30, -39), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
+                    dist = (int) tag.calculate();
+                })
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(47.4,-39, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
@@ -225,6 +239,8 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
+                    tag.initAprilTag(visionPortal);
+
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0.1);
@@ -245,6 +261,8 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .back(5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.RED);
+                    tag.findTag(telemetry);
                 })
                 //.waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-45,-58.3,Math.toRadians(0)))
@@ -253,8 +271,11 @@ public class REDaudienceSIDE extends LinearOpMode {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
-                .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(48.4,-33.6, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
+                    dist = (int) tag.calculate();
+                })
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(48.4,-35 + dist, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
@@ -280,6 +301,8 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0.2);
                     clawControl(0, 0);
+                    tag.initAprilTag(visionPortal);
+
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0);
@@ -305,6 +328,8 @@ public class REDaudienceSIDE extends LinearOpMode {
                 .back(5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.RED);
+                    tag.findTag(telemetry);
                 })
                 //.waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-45,-57.6,Math.toRadians(0)))
@@ -313,8 +338,11 @@ public class REDaudienceSIDE extends LinearOpMode {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
-                .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(47.4,-28, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
+                    dist = (int) tag.calculate();
+                })
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(47.4,-35 + dist, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
