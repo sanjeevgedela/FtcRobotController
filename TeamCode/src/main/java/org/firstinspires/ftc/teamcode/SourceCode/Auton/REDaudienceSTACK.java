@@ -46,7 +46,6 @@ public class REDaudienceSTACK extends LinearOpMode {
     private HuskyLens huskyLens;
     private VisionPortal visionPortal;
     int distance;
-    apriltag tag;
     WebcamName webcam1;
 
 
@@ -104,46 +103,13 @@ public class REDaudienceSTACK extends LinearOpMode {
     }
 
     public void scorePositionMid() {
-        rightSlide.setTargetPosition(1000);
+        rightSlide.setTargetPosition(1200);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        leftSlide.setTargetPosition(1000);
+        leftSlide.setTargetPosition(1200);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
-    }
-    private void    setManualExposure(int exposureMS, int gain) {
-        // Wait for the camera to be open, then use the controls
-
-        if (visionPortal == null) {
-            return;
-        }
-
-        // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        // Set camera controls unless we are stopping.
-        if (!isStopRequested())
-        {
-            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-                exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(50);
-            }
-            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-            sleep(20);
-            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            gainControl.setGain(gain);
-            sleep(20);
-        }
     }
 
     @Override
@@ -153,8 +119,6 @@ public class REDaudienceSTACK extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);
         detect = new HuskyStackDetection(telemetry, huskyLens);
-        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
-        tag = new apriltag(webcam1);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -235,22 +199,14 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .waitSeconds(0.3)
                 .back(5)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    reset();
-                    tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.RED);
-                    tag.findTag(telemetry);
-                })
                 .lineToLinearHeading(new Pose2d(-45, -60, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(25, -60), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(30, -40), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    distance = (int) tag.calculate();
-                })
                 .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(47.4, -40 + distance, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(47.4, -40, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
@@ -324,58 +280,49 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0.1);
-                    slideMovement(1, 200);
+                    slideMovement(1, 440);
                 })
-                .lineToLinearHeading(new Pose2d(-37.2, -37.5, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-37.2, -37, Math.toRadians(90)))
                 //.splineTo(new Vector2d(52.4,-38.4), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(1, 0);
+                    clawControl(0, 1);
                 })
                 .back(4)
-                .lineToLinearHeading(new Pose2d(-58, -39.5, Math.toRadians(180)))
-                .forward(1)
+                .lineToLinearHeading(new Pose2d(-54, -35, Math.toRadians(180)))
+                .forward(5)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0, 0);
                 })
                 .waitSeconds(0.3)
                 .back(5)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    reset();
-                    tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.RED);
-                    tag.findTag(telemetry);
-                })
                 .lineToLinearHeading(new Pose2d(-45, -59.3, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(25, -58.3), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    distance = (int) tag.calculate();
-                })
                 .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(47.4, -35 + distance, Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, 1);
-                })
-                .back(6)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionMid();
-                })
-                .strafeRight(4)
-                .forward(6.7)
+                .lineToLinearHeading(new Pose2d(53.4, -35, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
+
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                    scorePositionMid();
+                })
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                    clawControl(0, 1);
+                })
+                .waitSeconds(1.5)
                 .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
-                .lineToLinearHeading(new Pose2d(24.1, -57.5, Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(-34, -52.5), Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(24.1, -55.5, Math.toRadians(175)))
+                .splineToConstantHeading(new Vector2d(-34, -55.5), Math.toRadians(175))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(.2);
-                    slideMovement(1, 100);
+                    rotateControl(0);
+                    slideMovement(1, 420);
                     clawControl(0, 1);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -388,23 +335,22 @@ public class REDaudienceSTACK extends LinearOpMode {
                     telemetry.addData("dist", dist);
                 })
                 .waitSeconds(.3)
-                .strafeRight(.001 + dist)
-                .forward(24)
+                .strafeRight(9 + dist)
+                .forward(18)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 0);
                 })
-                .waitSeconds(0.3)
+                .waitSeconds(1)
                 .back(5)
-                .lineToLinearHeading(new Pose2d(-45, -57.5, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-45, -51.5, Math.toRadians(345)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
                 })
-                .splineToConstantHeading(new Vector2d(15, -57.5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(15, -51.5), Math.toRadians(345))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    scorePositionMid();
+                    slideMovement(1, 1400);
                 })
-                .splineToConstantHeading(new Vector2d(37.4, -38), Math.toRadians(0))
-                .waitSeconds(0.3)
+                .splineToConstantHeading(new Vector2d(37.4, -36.5), Math.toRadians(0))
                 .forward(14)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 1);
@@ -453,22 +399,14 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .waitSeconds(0.3)
                 .back(5)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    reset();
-                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.RED);
-                    tag.findTag(telemetry);
-                })
                 .lineToLinearHeading(new Pose2d(-45, -58.3, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(25, -57), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(30, -35), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    distance = (int) tag.calculate();
-                })
                 .waitSeconds(.3)
-                .lineToLinearHeading(new Pose2d(47.4, -35 + distance, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(47.4, -35, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
@@ -607,12 +545,10 @@ public class REDaudienceSTACK extends LinearOpMode {
             while (opModeInInit()) {
                 FtcDashboard.getInstance().startCameraStream(webcam, 120);
                 pipeline.telemetry.update();
-                tag.initAprilTag(visionPortal);
             }
         }
         waitForStart();
 
-        setManualExposure(6, 250);
 
         sleep(100);
         RedPipe11.Location11 detectedColor = pipeline.getLocation();
