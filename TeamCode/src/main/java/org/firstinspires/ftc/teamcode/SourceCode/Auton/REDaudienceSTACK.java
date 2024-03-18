@@ -200,8 +200,6 @@ public class REDaudienceSTACK extends LinearOpMode {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double parkStrafe = 25;
-        DriveConstants.MAX_VEL = 73;
-        DriveConstants.MAX_ACCEL = 73;
 
         Pose2d startPose = new Pose2d(-38.69, -65, Math.toRadians(90));
 
@@ -430,7 +428,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0);
-                    slideMovement(1, 275);
+                    slideMovement(1, 450);
                 })
                 .lineToLinearHeading(new Pose2d(-50, -37, Math.toRadians(90)))
                 //.splineTo(new Vector2d(52.4,-38.4), Math.toRadians(0))
@@ -442,11 +440,16 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-56, -34.8, Math.toRadians(180)))
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     rotateControl(0.1);
-                    slideMovement(1, 280);
+                    slideMovement(1, 430);
                 })
-                .forward(7.75)
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                .forward(7.75,
+                        SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 0);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.2, () -> {
+                    rotateControl(1);
                 })
                 .waitSeconds(0.3)
                 .back(5)
@@ -471,7 +474,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    slideMovement(1, 500);
+                    slideMovement(1, 360);
                 })
                 .strafeRight(10)
                 .forward(6.4)
@@ -485,7 +488,7 @@ public class REDaudienceSTACK extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(24.1, -56.2, Math.toRadians(180)))
                 .splineToConstantHeading(new Vector2d(-34, -52), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    slideMovement(1, 210);
+                    slideMovement(1, 330);
                     clawControl(1, 1);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -499,7 +502,9 @@ public class REDaudienceSTACK extends LinearOpMode {
                 })
                 .waitSeconds(.3)
                 .strafeRight(.001 + dist)
-                .forward(26)
+                .forward(26,
+                        SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 0);
                 })

@@ -535,8 +535,6 @@ public class TestStackAlign extends LinearOpMode {
                     dist = detect.method();
                     telemetry.addData("dist", dist);
                     slideMovement(1,450);
-                    DriveConstants.MAX_ACCEL = 15;
-                    DriveConstants.MAX_VEL = 15;
 
 //                    alignToStack(-1);
                 })
@@ -547,9 +545,9 @@ public class TestStackAlign extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
                 .waitSeconds(.5)
                 .strafeRight(dist + .0001)
-                .forward(10)
-
-                .waitSeconds(.1)
+                .forward(10,
+                        SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
 //
 //                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
@@ -561,8 +559,9 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                     telemetry.update();
-                    DriveConstants.MAX_ACCEL = 73;
-                    DriveConstants.MAX_VEL = 73;
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.35, () -> {
+                    rotateControl(1);
                 })
 
                 .waitSeconds(.5)
@@ -633,15 +632,15 @@ public class TestStackAlign extends LinearOpMode {
                     dist = detect.method();
                     telemetry.addData("dist", dist);
                     slideMovement(1,400);
-                    DriveConstants.MAX_ACCEL = 15;
-                    DriveConstants.MAX_VEL = 15;
 
 //                    alignToStack(-1);
                 })
 
                 .waitSeconds(.6)
                 .strafeRight(dist + .0001)
-                .forward(10)
+                .forward(10,
+                        SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                .lineToLinearHeading(new Pose2d(-65.60,-4 + dist, Math.toRadians(180)))
 
 //                .lineToConstantHeading(new Vector2d(-64,-4.2))
@@ -658,11 +657,12 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                     telemetry.update();
-                    DriveConstants.MAX_ACCEL = 73;
-                    DriveConstants.MAX_VEL = 73;
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.35, () -> {
+                    rotateControl(1);
                 })
 
-                .waitSeconds(.4)
+                .waitSeconds(.5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(1);
                 })
@@ -690,7 +690,7 @@ public class TestStackAlign extends LinearOpMode {
                     scorePositionMid();
                 })
 
-                .waitSeconds(.5)
+                .waitSeconds(.1)
                 .back(3)
 
 //                .back(25)

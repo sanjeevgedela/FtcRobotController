@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-@TeleOp(name="teztslidztele")
+@TeleOp(name="OFFICIALv2")
 public class teztslidztele extends LinearOpMode {
 
     public DcMotorEx leftFront = null;
