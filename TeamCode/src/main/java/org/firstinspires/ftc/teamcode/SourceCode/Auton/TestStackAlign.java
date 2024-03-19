@@ -393,15 +393,36 @@ public class TestStackAlign extends LinearOpMode {
 
                 .waitSeconds(0.5)
 
+//
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
 //                    alignToStack();
-                    alignmentStart();
-                    int stackCenterX = PixelPipeline.getStackCenterX();
-                    if (stackCenterX != -2) {
-                        alignToStack(stackCenterX);
-                    }
+//                    alignmentStart();
+//                    int stackCenterX = PixelPipeline.getStackCenterX();
+//                    if (stackCenterX != -2) {
+//                        alignToStack(stackCenterX);
+//                    }
+
+//                    DriveConstants.MAX_ACCEL = 30;
+//                    DriveConstants.MAX_VEL = 30;
+
+//                    alignmentStart();
+//                    int stackCenterX = PixelPipeline.getStackCenterX();
+//                    if (stackCenterX != -2) {
+//                        alignToStack(stackCenterX);
+//                    }
+                    dist = detect.method();
+                    telemetry.addData("dist", dist);
+                    slideMovement(1,450);
+
 //                    alignToStack(-1);
                 })
+
+                .waitSeconds(1)
+                .forward(3)
+
+                //.splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
+                .waitSeconds(.5)
+                .strafeRight(dist + .0001)
 
                 .waitSeconds(1)
 
@@ -485,7 +506,7 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(43.9, -25.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(44.9, -25.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
@@ -534,7 +555,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    }
                     dist = detect.method();
                     telemetry.addData("dist", dist);
-                    slideMovement(1,450);
+                    slideMovement(1,410);
 
 //                    alignToStack(-1);
                 })
@@ -542,11 +563,11 @@ public class TestStackAlign extends LinearOpMode {
                 .waitSeconds(1)
                 .forward(3)
 
-                .splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
+                //.splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
                 .waitSeconds(.5)
                 .strafeRight(dist + .0001)
-                .forward(10,
-                        SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .forward(8,
+                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
 //
@@ -613,7 +634,7 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(1,1);
-                    slideMovement(1,400);
+                    slideMovement(1,290);
 
 //                    readyPick();
                 })
@@ -832,6 +853,141 @@ public class TestStackAlign extends LinearOpMode {
         TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(-50, -35.2, Math.toRadians(0)))
                 .strafeRight(parkStrafe)
                 .forward(10)
+                .build();
+
+        TrajectorySequence left4 = drive.trajectorySequenceBuilder(new Pose2d(14.03, -62.8, Math.toRadians(90)))
+                // x= 14.03 y= -62.8
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(0);
+                    clawControl(0, 0);
+                })
+                .lineToLinearHeading(new Pose2d(4, -29.6, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    clawControl(0, 1);
+                })
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    scorePositionLow();
+                })
+                .lineToLinearHeading(new Pose2d(44.9, -25.2, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(1, 0);
+                })
+                .waitSeconds(0.1)
+                .back(7)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                    rotateControl(1);
+                    clawControl(0,0);
+                })
+//
+//                Cycle Period
+//
+//                .splineToLinearHeading(new Pose2d(-33.57, -8.08, Math.toRadians(180)), Math.toRadians(0))
+//
+                .lineToLinearHeading(new Pose2d(28.47, -9, Math.toRadians(180)))
+                .splineToConstantHeading(new Vector2d(-33.57,-8.08), Math.toRadians(180))
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(0.2);
+                    clawControl(1,1);
+                    slideMovement(1,210);
+//                    readyPick();
+                })
+
+//
+                .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
+//                    slideMovement(1,315);
+
+//
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    alignToStack();
+//                    alignmentStart();
+//                    int stackCenterX = PixelPipeline.getStackCenterX();
+//                    if (stackCenterX != -2) {
+//                        alignToStack(stackCenterX);
+//                    }
+
+//                    DriveConstants.MAX_ACCEL = 30;
+//                    DriveConstants.MAX_VEL = 30;
+
+//                    alignmentStart();
+//                    int stackCenterX = PixelPipeline.getStackCenterX();
+//                    if (stackCenterX != -2) {
+//                        alignToStack(stackCenterX);
+//                    }
+                    dist = detect.method();
+                    telemetry.addData("dist", dist);
+                    slideMovement(1,210);
+
+//                    alignToStack(-1);
+                })
+
+                .waitSeconds(1)
+                .forward(3)
+
+                //.splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
+                .waitSeconds(.5)
+                .strafeRight(dist + .0001)
+                .forward(8,
+                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+
+//
+//                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+//                    wristDown();
+//                    slamDown();
+//                })
+//
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(0,0);
+                    telemetry.update();
+                })
+                .UNSTABLE_addTemporalMarkerOffset(.35, () -> {
+                    rotateControl(1);
+                })
+
+                .waitSeconds(.5)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    rotateControl(1);
+                })
+                .back(10)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+
+                .splineToConstantHeading(new Vector2d(4.10, -9.47), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    rotateControl(1);
+                    slideMovement(1,1500);
+                    clawControl(0,0);
+                })
+                .lineToLinearHeading(new Pose2d(42, -46.87, Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    clawControl(0,1);
+                })
+
+                .waitSeconds(0.3)
+
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    scorePositionMid();
+                })
+
+                .waitSeconds(.3)
+                .back(3)
+
+//                .back(25)
+//
+//                .waitSeconds(1)
+//
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+//
+//                .splineToLinearHeading(new Pose2d(50, -64, Math.toRadians(180)), Math.toRadians(0))
+                .waitSeconds(3)
                 .build();
 
         while (opModeInInit()){

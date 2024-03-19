@@ -169,7 +169,7 @@ public class BLUEaudienceStack extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                 })
                 .lineToLinearHeading(new Pose2d(-35, 36, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -264,7 +264,7 @@ public class BLUEaudienceStack extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                 })
                 .lineToLinearHeading(new Pose2d(-26.2, 36.5, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -360,7 +360,7 @@ public class BLUEaudienceStack extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0.2);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                 })
                 .strafeRight(7)
                 .lineToLinearHeading(new Pose2d(-22.2, 30.6, Math.toRadians(0)))

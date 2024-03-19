@@ -70,7 +70,7 @@ public class teztslidztele extends LinearOpMode {
 
     public ColorSensor colorSensor = null;
 
-    public DistanceSensor distance = null;
+    //public DistanceSensor distance = null;
 
     double movement;
     double rotation;
@@ -364,7 +364,7 @@ public class teztslidztele extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
         plane = hardwareMap.get(Servo.class, "plane");
 
-        distance = hardwareMap.get(DistanceSensor.class, "distance");
+        //distance = hardwareMap.get(DistanceSensor.class, "distance");
 
         // LED = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 
@@ -397,7 +397,7 @@ public class teztslidztele extends LinearOpMode {
                 pipeline.telemetry.update();
                 telemetry.addData("PosRight", rightSlide.getCurrentPosition());
                 telemetry.addData("PosLeft", leftSlide.getCurrentPosition());
-                telemetry.addData("Distance", distance.getDistance(DistanceUnit.MM));
+                //telemetry.addData("Distance", distance.getDistance(DistanceUnit.MM));
                 telemetry.addData("mode", currentMode);
                 telemetry.update();
 

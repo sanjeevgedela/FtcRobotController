@@ -165,7 +165,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                 })
                 .strafeLeft(5)
                 .lineToLinearHeading(new Pose2d(-36.5, -30.6, Math.toRadians(0)))

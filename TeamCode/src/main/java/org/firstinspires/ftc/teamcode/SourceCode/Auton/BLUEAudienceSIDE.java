@@ -169,7 +169,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
+
                 })
                 .lineToLinearHeading(new Pose2d(-35, 36, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -177,11 +177,10 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 })
                 .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(0.1);
-                    slideMovement(1, 275);
+                    rotateControl(0.20);
+                    slideMovement(1, 280);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                     clawControl(0,1);
-                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
                 })
                 .lineToLinearHeading(new Pose2d(-30, 37.1, Math.toRadians(180)))
                 .forward(14)
@@ -192,6 +191,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
                 .waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
@@ -231,7 +232,6 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
                 })
                 .lineToLinearHeading(new Pose2d(-26.2, 36.5, Math.toRadians(270)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -239,11 +239,10 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 })
                 .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(0.1);
-                    slideMovement(1, 275);
+                    rotateControl(0.20);
+                    slideMovement(1, 280);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                     clawControl(0,1);
-                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
                 })
                 .lineToLinearHeading(new Pose2d(-30, 38.4, Math.toRadians(180)))
                 .forward(16)
@@ -254,6 +253,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
                 .waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
@@ -293,7 +294,6 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(0.2);
                     clawControl(0, 0);
-                    tag.initAprilTag(visionPortal);
                 })
                 .strafeRight(7)
                 .lineToLinearHeading(new Pose2d(-22.2, 30.6, Math.toRadians(0)))
@@ -302,11 +302,11 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 })
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(0.1);
-                    slideMovement(1, 275);
+                    rotateControl(0.20);
+                    slideMovement(1, 280);
+                    tag.initAprilTag(visionPortal, hardwareMap);
                     clawControl(0,1);
-                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
+
                 })
                 .lineToLinearHeading(new Pose2d(-30, 35, Math.toRadians(180)))
                 .forward(17)
@@ -317,6 +317,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
+                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+                    tag.findTag(telemetry);
                 })
                 .waitSeconds(4)
                 .lineToLinearHeading(new Pose2d(-30, 62, Math.toRadians(0)))

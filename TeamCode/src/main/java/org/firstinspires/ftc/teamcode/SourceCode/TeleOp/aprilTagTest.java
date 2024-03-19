@@ -122,7 +122,7 @@ public class aprilTagTest extends LinearOpMode {
         tag = new apriltag(webcam1);
 
         if(opModeInInit()) {
-                tag.initAprilTag(visionPortal);
+            tag.initAprilTag(visionPortal, hardwareMap);
         }
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

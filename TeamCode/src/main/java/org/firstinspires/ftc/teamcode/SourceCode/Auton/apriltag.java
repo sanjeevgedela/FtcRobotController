@@ -30,21 +30,14 @@ public class apriltag {
         webcam1 = a;
     }
 
-    public void initAprilTag(VisionPortal visionPortal) {
+    public void initAprilTag(VisionPortal visionPortal, HardwareMap hardwareMap) {
 
         // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
 
 
-
-        CameraName switchableCamera = ClassFactory.getInstance()
-                .getCameraManager().nameForSwitchableCamera(webcam1);
-
-        // Create the vision portal by using a builder.
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(switchableCamera)
-                .addProcessor(aprilTag)
-                .build();
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "Webcam 2"), aprilTag);
 
     }
 
@@ -67,15 +60,15 @@ public class apriltag {
             if (type == DETECT.RIGHT) {
                 DESIRED_TAG_ID = 3;
             }
-        } else if (color == COLOR.BLUE) {
+        } else if (color == COLOR.RED) {
             if (type == DETECT.LEFT) {
-                DESIRED_TAG_ID = 1;
+                DESIRED_TAG_ID = 4;
             }
             if (type == DETECT.MIDDLE) {
-                DESIRED_TAG_ID = 2;
+                DESIRED_TAG_ID = 5;
             }
             if (type == DETECT.RIGHT) {
-                DESIRED_TAG_ID = 3;
+                DESIRED_TAG_ID = 6;
             }
         }
     }
@@ -83,7 +76,7 @@ public class apriltag {
     public void findTag(Telemetry telemetry) {
         targetFound = false;
         desiredTag = null;
-
+        if(aprilTag.getDetections() != null){
         // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
@@ -103,6 +96,7 @@ public class apriltag {
                 // This tag is NOT in the library, so we don't have enough information to track to it.
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
+        }
         }
     }
 
