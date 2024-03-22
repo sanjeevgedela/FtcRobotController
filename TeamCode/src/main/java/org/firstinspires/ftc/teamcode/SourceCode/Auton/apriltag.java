@@ -106,9 +106,9 @@ public class apriltag {
 
         if (targetFound) {
             if(desiredTag.ftcPose.x < 0){
-                distance = desiredTag.ftcPose.x +2;
+                distance = -((desiredTag.ftcPose.x * 2.25) + 2);
             } else if (desiredTag.ftcPose.x > 0) {
-                distance = desiredTag.ftcPose.x - 2;
+                distance = -((desiredTag.ftcPose.x * 2.25) - 2);
             }
             if (distance < 0.4 || distance > -0.4) {
               //  distance = 0;

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HuskyStackDetection {
     private Telemetry telemetry;
-    private final int READ_PERIOD = 1;
+    private final int READ_PERIOD = 100;
 
     private HuskyLens huskyLens;
 
@@ -25,7 +25,7 @@ public class HuskyStackDetection {
 
     public void init(HardwareMap hardwareMap) {
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
-        rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
+        rateLimit = new Deadline(READ_PERIOD, TimeUnit.MILLISECONDS);
         rateLimit.expire();
         if (!huskyLens.knock()) {
             telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
@@ -38,11 +38,14 @@ public class HuskyStackDetection {
     }
 
     public int method(){
-//        if (!rateLimit.hasExpired()) {
-//            continue;
-//        }
-//        rateLimit.reset();
-
+        if(huskyLens.knock()) {
+            while (huskyLens.knock()) {
+                if (!rateLimit.hasExpired()) {
+                    continue;
+                }
+                rateLimit.reset();
+            }
+        }
         /*
          * All algorithms, except for LINE_TRACKING, return a list of Blocks where a
          * Block represents the outline of a recognized object along with its ID number.

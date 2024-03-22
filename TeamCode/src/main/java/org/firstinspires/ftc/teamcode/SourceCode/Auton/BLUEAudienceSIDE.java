@@ -13,7 +13,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.SourceCode.TeleOp.PIDvalues;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.trajectorysequence.TrajectorySequence;
@@ -30,6 +33,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.concurrent.TimeUnit;
+
 @Config
 @Autonomous(name = "BLUEAudienceSIDE")
 public class BLUEAudienceSIDE extends LinearOpMode {
@@ -37,6 +42,42 @@ public class BLUEAudienceSIDE extends LinearOpMode {
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
     private VisionPortal visionPortal;               // Used to manage the video source.
+
+
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
+
 
     WebcamName webcam1;
     apriltag tag;
@@ -178,12 +219,13 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0.20);
-                    slideMovement(1, 280);
-                    tag.initAprilTag(visionPortal, hardwareMap);
+                    slideMovement(1, 260);
                     clawControl(0,1);
                 })
                 .lineToLinearHeading(new Pose2d(-30, 37.1, Math.toRadians(180)))
-                .forward(14)
+                .forward(14,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
@@ -194,18 +236,19 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.BLUE);
                     tag.findTag(telemetry);
                 })
-                .waitSeconds(4)
+                .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
+                .waitSeconds(8)
                 .splineToConstantHeading(new Vector2d(25, 59), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .splineToConstantHeading(new Vector2d(43, 48), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                .splineToConstantHeading(new Vector2d(35.5, 35.5), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> {
                     dist = tag.calculate();
                 })
-                .waitSeconds(0.3)
-                .lineToLinearHeading(new Pose2d(70, 35.5 + dist, Math.toRadians(0)))
+                .waitSeconds(1.8)
+                .lineToLinearHeading(new Pose2d(69, 35.5 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
@@ -245,28 +288,34 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     clawControl(0,1);
                 })
                 .lineToLinearHeading(new Pose2d(-30, 38.4, Math.toRadians(180)))
-                .forward(16)
+                .forward(16,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
                 .waitSeconds(.3)
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    reset();
+                    rotateControl(1);
                     tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.BLUE);
                     tag.findTag(telemetry);
                 })
-                .waitSeconds(4)
+                .waitSeconds(1)
+                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                    reset();
+                })
+                .waitSeconds(8)
                 .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
                 .splineToConstantHeading(new Vector2d(25, 58), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .splineToConstantHeading(new Vector2d(43, 41), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                .splineToConstantHeading(new Vector2d(43, 40), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
                     dist = tag.calculate();
                 })
-                .waitSeconds(0.1)
+                .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(68, 40 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -276,7 +325,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
                 })
-                .strafeRight(8)
+                .strafeLeft(6)
                 .forward(4.5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
@@ -302,14 +351,15 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 })
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(0.20);
+                    rotateControl(0.15);
                     slideMovement(1, 280);
-                    tag.initAprilTag(visionPortal, hardwareMap);
                     clawControl(0,1);
 
                 })
-                .lineToLinearHeading(new Pose2d(-30, 35, Math.toRadians(180)))
-                .forward(17)
+                .lineToLinearHeading(new Pose2d(-30, 35.7, Math.toRadians(180)))
+                .forward(17,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,0);
                 })
@@ -320,37 +370,46 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
                     tag.findTag(telemetry);
                 })
-                .waitSeconds(4)
-                .lineToLinearHeading(new Pose2d(-30, 62, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(25, 61), Math.toRadians(0))
+                .waitSeconds(.5)
+                .lineToLinearHeading(new Pose2d(-30, 61, Math.toRadians(0)))
+                .waitSeconds(8)
+                .splineToConstantHeading(new Vector2d(25, 59.5), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                     scorePositionLow();
                 })
-                .splineToConstantHeading(new Vector2d(43, 48), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(43, 51), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    tag.findTag(telemetry);
                     dist = tag.calculate();
                 })
-                .waitSeconds(0.3)
-                .lineToLinearHeading(new Pose2d(66, 56.8 + dist, Math.toRadians(0)))
+                .waitSeconds(.5)
+                .lineToLinearHeading(new Pose2d(66, 51 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                 })
-                .back(3)
+                .back(2)
+                //.back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
                 })
-                .strafeRight(5)
-                .forward(4.5)
+                .forward(2.5)
+                //.strafeRight(5)
+                //.forward(4.5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, 1);
+                    clawControl(0, .3);
                 })
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     reset();
                 })
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightSlide.setPower(0);
+                    leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    leftSlide.setPower(0);
+                })
                 .strafeLeft(20)
-                .forward(8)
                 .build();
 
         TrajectorySequence stage2 = drive.trajectorySequenceBuilder(stage2start)
@@ -411,6 +470,13 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     reset();
                 })
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> {
+                    rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightSlide.setPower(0);
+                    leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    leftSlide.setPower(0);
+                    visionPortal.close();
+                })
                 .waitSeconds(3)
                 .build();
 
@@ -426,34 +492,40 @@ public class BLUEAudienceSIDE extends LinearOpMode {
         }
 
         waitForStart();
+        if (opModeIsActive() && !isStopRequested()) {
+        sleep(200);
+        tag.initAprilTag(visionPortal, hardwareMap);
         sleep(100);
         BluePipe11.Location11 detectedColor = pipeline.getLocation();
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                FtcDashboard.getInstance().startCameraStream(webcam, 120);
-                telemetry.addData("distance", dist);
-                telemetry.update();
+        //setManualExposure(8, 250);  // Use low exposure time to reduce motion blur
+         //telemetry.update();
                 if (detectedColor != null) {
                     switch (detectedColor) {
                         case RIGHT:
                             webcam.closeCameraDevice();
                             drive.followTrajectorySequence(right);
-                            sleep(30000000);
+                            //sleep(30000000);
+                            terminateOpModeNow();
                             break;
                         case MIDDLE:
                             webcam.closeCameraDevice();
                             drive.followTrajectorySequence(middle);
-                            sleep(30000000);
+//                            sleep(30000000);
+                            terminateOpModeNow();
                             break;
                         case LEFT:
                             webcam.closeCameraDevice();
                             drive.followTrajectorySequence(left);
-                            sleep(30000000);
+//                            sleep(30000000);
+                            terminateOpModeNow();
                             break;
                     }
                 }
+
+
+
+
                 PoseStorage.currentPose = drive.getPoseEstimate();
-            }
         }
     }
     public static class BluePipe11 extends OpenCvPipeline {

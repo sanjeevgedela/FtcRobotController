@@ -207,17 +207,17 @@ public class teztslidztele extends LinearOpMode {
 
     public void clawControl() {
 
-        if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() == 0){
+        if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() < 0.5){
             rightClaw.setPosition(1);
-        } else if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() > 0) {
+        } else if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() > 0.5) {
             rightClaw.setPosition(0.4);
         } else {
             rightClaw.setPosition(0);
         }
 
-        if (gamepad2.right_trigger > 0 && rotateClaw.getPosition() == 0) {
+        if (gamepad2.right_trigger > 0 && rotateClaw.getPosition() < 0.5) {
           leftClaw.setPosition(1);
-        } else if(gamepad2.right_trigger > 0 && rotateClaw.getPosition() > 0) {
+        } else if(gamepad2.right_trigger > 0 && rotateClaw.getPosition() > .5) {
             leftClaw.setPosition(0.65);
         } else {
             leftClaw.setPosition(0.4);
@@ -315,7 +315,7 @@ public class teztslidztele extends LinearOpMode {
 
     public void planeControl(){
         if(gamepad2.right_bumper){
-            plane.setPosition(0);
+            plane.setPosition(1);
         }
     }
 
@@ -379,11 +379,11 @@ public class teztslidztele extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         plane.setDirection(Servo.Direction.REVERSE);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
 
         leftClaw.scaleRange(0.55, 1);
         rightClaw.scaleRange(0.15, 0.4);
         rotateClaw.scaleRange(0.7, 1);
-        leftClaw.setDirection(Servo.Direction.REVERSE);
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 

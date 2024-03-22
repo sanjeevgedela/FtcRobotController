@@ -312,11 +312,14 @@ public class TestStackAlign extends LinearOpMode {
                 })
                 .strafeRight(15)
                 .forward(5)
+
+                //CYCLE
+
                 .build();
 
         TrajectorySequence middle = drive.trajectorySequenceBuilder(new Pose2d(9.4, -62.4, Math.toRadians(90)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    slideMovement(1, -40);
+                    slideMovement(1, 40);
                     rotateControl(0);
                     clawControl(0, 0);
                 })
@@ -345,6 +348,9 @@ public class TestStackAlign extends LinearOpMode {
                 .strafeRight(23)
                 .waitSeconds(1)
                 .forward(5)
+
+                //CYCLE
+
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(14.03, -62.82, Math.toRadians(90)))
@@ -632,9 +638,9 @@ public class TestStackAlign extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-33.57,-5), Math.toRadians(180))
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0);
+                    rotateControl(0.2);
                     clawControl(1,1);
-                    slideMovement(1,290);
+                    slideMovement(1,200);
 
 //                    readyPick();
                 })
@@ -652,7 +658,7 @@ public class TestStackAlign extends LinearOpMode {
 //                    }
                     dist = detect.method();
                     telemetry.addData("dist", dist);
-                    slideMovement(1,400);
+                    slideMovement(1,200);
 
 //                    alignToStack(-1);
                 })
@@ -869,7 +875,7 @@ public class TestStackAlign extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(44.9, -25.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45.7, -25.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(1, 0);
                 })
@@ -889,18 +895,18 @@ public class TestStackAlign extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-33.57,-8.08), Math.toRadians(180))
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
-                    rotateControl(0.2);
+                    rotateControl(.2);
                     clawControl(1,1);
                     slideMovement(1,210);
 //                    readyPick();
                 })
 
 //
-                .splineToConstantHeading(new Vector2d(-53.60,-5), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53.60,-6), Math.toRadians(180))
 //                    slideMovement(1,315);
 
 //
-                .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
 //                    alignToStack();
 //                    alignmentStart();
 //                    int stackCenterX = PixelPipeline.getStackCenterX();
@@ -916,10 +922,8 @@ public class TestStackAlign extends LinearOpMode {
 //                    if (stackCenterX != -2) {
 //                        alignToStack(stackCenterX);
 //                    }
-                    dist = detect.method();
-                    telemetry.addData("dist", dist);
-                    slideMovement(1,210);
-
+                        dist = detect.method();
+                        sleep(200);
 //                    alignToStack(-1);
                 })
 
@@ -929,8 +933,8 @@ public class TestStackAlign extends LinearOpMode {
                 //.splineToConstantHeading(new Vector2d(-65.60,-4 + dist), Math.toRadians(180))
                 .waitSeconds(.5)
                 .strafeRight(dist + .0001)
-                .forward(8,
-                        SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .forward(10,
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 
 //
@@ -948,10 +952,7 @@ public class TestStackAlign extends LinearOpMode {
                     rotateControl(1);
                 })
 
-                .waitSeconds(.5)
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    rotateControl(1);
-                })
+                .waitSeconds(1)
                 .back(10)
 
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
@@ -961,10 +962,10 @@ public class TestStackAlign extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(4.10, -9.47), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(1);
-                    slideMovement(1,1500);
+                    slideMovement(1,1250);
                     clawControl(0,0);
                 })
-                .lineToLinearHeading(new Pose2d(42, -46.87, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(44, -35, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     clawControl(0,1);
                 })
@@ -995,8 +996,8 @@ public class TestStackAlign extends LinearOpMode {
             FtcDashboard.getInstance().startCameraStream(webcam, 120);
             pipeline.telemetry.update();
 
-            FtcDashboard.getInstance().startCameraStream(webcam2, 120);
-            PixelPipeline.telemetry.update();
+//            FtcDashboard.getInstance().startCameraStream(webcam2, 120);
+//            PixelPipeline.telemetry.update();
         }
 
         waitForStart();
@@ -1013,6 +1014,7 @@ public class TestStackAlign extends LinearOpMode {
             double pid = controller.calculate(armPos, target);
             rightSlide.setPower(pid);
             leftSlide.setPower(pid);
+            dist = detect.method();
 
             if (detectedColor != null) {
                 switch (detectedColor) {
@@ -1025,7 +1027,7 @@ public class TestStackAlign extends LinearOpMode {
                         sleep(30000000);
                         break;
                     case LEFT:
-                        drive.followTrajectorySequence(left2);
+                        drive.followTrajectorySequence(left4);
                         sleep(30000000);
                         break;
                 }
