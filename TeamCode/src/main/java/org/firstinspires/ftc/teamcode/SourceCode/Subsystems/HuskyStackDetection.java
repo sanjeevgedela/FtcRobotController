@@ -38,14 +38,15 @@ public class HuskyStackDetection {
     }
 
     public int method(){
-        if(huskyLens.knock()) {
-            while (huskyLens.knock()) {
-                if (!rateLimit.hasExpired()) {
-                    continue;
-                }
-                rateLimit.reset();
-            }
-        }
+//        if(huskyLens.knock()) {
+//            while (huskyLens.knock()) {
+//                if (!rateLimit.hasExpired()) {
+//                    continue;
+//                }
+//                rateLimit.reset();
+//            }
+//        }
+        rateLimit.expire();
         /*
          * All algorithms, except for LINE_TRACKING, return a list of Blocks where a
          * Block represents the outline of a recognized object along with its ID number.

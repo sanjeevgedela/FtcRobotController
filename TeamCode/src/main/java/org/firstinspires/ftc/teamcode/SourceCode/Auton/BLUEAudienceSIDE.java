@@ -80,7 +80,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
 
 
     WebcamName webcam1;
-    apriltag tag;
+//    apriltag tag;
     double dist;
 
     public PersonalPID controller;
@@ -128,10 +128,10 @@ public class BLUEAudienceSIDE extends LinearOpMode {
     }
 
     public void scorePositionLow() {
-        rightSlide.setTargetPosition(600);
+        rightSlide.setTargetPosition(900);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
-        leftSlide.setTargetPosition(600);
+        leftSlide.setTargetPosition(900);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(1);
         rotateControl(1);
@@ -169,7 +169,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
         });
 
         webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
-        tag = new apriltag(webcam1);
+//        tag = new apriltag(webcam1);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -178,8 +178,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
 
         //Set Ranges
-        leftClaw.scaleRange(0.5, 1);
-        rightClaw.scaleRange(0.07, 0.5);
+        leftClaw.scaleRange(0.55, 1);
+        rightClaw.scaleRange(0.175, 0.4);
         rotateClaw.scaleRange(0.65, 1);
         leftClaw.setDirection(Servo.Direction.REVERSE);
         //Define all Slide motors
@@ -233,8 +233,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
-                    tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
+//                    tag.setType(apriltag.DETECT.RIGHT, apriltag.COLOR.BLUE);
+//                    tag.findTag(telemetry);
                 })
                 .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(-30, 60, Math.toRadians(0)))
@@ -244,11 +244,11 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(35.5, 35.5), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> {
-                    dist = tag.calculate();
-                })
-                .waitSeconds(1.8)
-                .lineToLinearHeading(new Pose2d(69, 35.5 + dist, Math.toRadians(0)))
+//                .UNSTABLE_addTemporalMarkerOffset(1.5, () -> {
+//                    dist = tag.calculate();
+//                })
+                .waitSeconds(.5)
+                .lineToLinearHeading(new Pose2d(67.5, 35.5 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
@@ -262,8 +262,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(0, 1);
                 })
-                .waitSeconds(0.2)
-                .back(4)
+                .waitSeconds(0.3)
+                .back(6)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -284,7 +284,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     rotateControl(0.20);
                     slideMovement(1, 280);
-                    tag.initAprilTag(visionPortal, hardwareMap);
+//                    tag.initAprilTag(visionPortal, hardwareMap);
                     clawControl(0,1);
                 })
                 .lineToLinearHeading(new Pose2d(-30, 38.4, Math.toRadians(180)))
@@ -298,8 +298,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     rotateControl(1);
-                    tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
+//                    tag.setType(apriltag.DETECT.MIDDLE, apriltag.COLOR.BLUE);
+//                    tag.findTag(telemetry);
                 })
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
@@ -312,11 +312,11 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(43, 40), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
-                    dist = tag.calculate();
-                })
+//                .UNSTABLE_addTemporalMarkerOffset(.7, () -> {
+//                    dist = tag.calculate();
+//                })
                 .waitSeconds(1)
-                .lineToLinearHeading(new Pose2d(68, 40 + dist, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(66.6, 40 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
@@ -331,7 +331,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     clawControl(0, 1);
                 })
                 .waitSeconds(0.2)
-                .back(4)
+                .back(7)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
                 })
@@ -367,8 +367,8 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .back(3)
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     reset();
-                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
-                    tag.findTag(telemetry);
+//                    tag.setType(apriltag.DETECT.LEFT, apriltag.COLOR.BLUE);
+//                    tag.findTag(telemetry);
                 })
                 .waitSeconds(.5)
                 .lineToLinearHeading(new Pose2d(-30, 61, Math.toRadians(0)))
@@ -378,10 +378,10 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                     scorePositionLow();
                 })
                 .splineToConstantHeading(new Vector2d(43, 51), Math.toRadians(0))
-                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    tag.findTag(telemetry);
-                    dist = tag.calculate();
-                })
+//                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+//                    tag.findTag(telemetry);
+//                    dist = tag.calculate();
+//                })
                 .waitSeconds(.5)
                 .lineToLinearHeading(new Pose2d(66, 51 + dist, Math.toRadians(0)))
                 //initial drop
@@ -393,11 +393,12 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     scorePositionMid();
                 })
+                .strafeRight(4)
                 .forward(2.5)
                 //.strafeRight(5)
                 //.forward(4.5)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    clawControl(0, .3);
+                    clawControl(0, 1);
                 })
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -493,31 +494,31 @@ public class BLUEAudienceSIDE extends LinearOpMode {
 
         waitForStart();
         if (opModeIsActive() && !isStopRequested()) {
-        sleep(200);
-        tag.initAprilTag(visionPortal, hardwareMap);
-        sleep(100);
+//        sleep(200);
+//        tag.initAprilTag(visionPortal, hardwareMap);
+//        sleep(100);
         BluePipe11.Location11 detectedColor = pipeline.getLocation();
         //setManualExposure(8, 250);  // Use low exposure time to reduce motion blur
          //telemetry.update();
                 if (detectedColor != null) {
                     switch (detectedColor) {
                         case RIGHT:
-                            webcam.closeCameraDevice();
+                            //webcam.closeCameraDevice();
                             drive.followTrajectorySequence(right);
-                            //sleep(30000000);
-                            terminateOpModeNow();
+                            sleep(30000000);
+//                            terminateOpModeNow();
                             break;
                         case MIDDLE:
-                            webcam.closeCameraDevice();
+                            //webcam.closeCameraDevice();
                             drive.followTrajectorySequence(middle);
-//                            sleep(30000000);
-                            terminateOpModeNow();
+                            sleep(30000000);
+//                            terminateOpModeNow();
                             break;
                         case LEFT:
-                            webcam.closeCameraDevice();
+                            //webcam.closeCameraDevice();
                             drive.followTrajectorySequence(left);
-//                            sleep(30000000);
-                            terminateOpModeNow();
+                            sleep(30000000);
+//                            terminateOpModeNow();
                             break;
                     }
                 }
