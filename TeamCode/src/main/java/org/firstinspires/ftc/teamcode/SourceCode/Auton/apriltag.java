@@ -26,8 +26,14 @@ public class apriltag {
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     boolean targetFound = false;
 
+    double theta = 0;
+
     public apriltag(WebcamName a) {
         webcam1 = a;
+    }
+
+    public apriltag(){
+
     }
 
     public void initAprilTag(VisionPortal visionPortal, HardwareMap hardwareMap) {
@@ -117,6 +123,15 @@ public class apriltag {
 
         return distance;
 
+    }
+
+    public double relocalize(){
+
+        if (targetFound) {
+            theta = desiredTag.ftcPose.yaw;
+        }
+
+        return theta;
     }
 }
 

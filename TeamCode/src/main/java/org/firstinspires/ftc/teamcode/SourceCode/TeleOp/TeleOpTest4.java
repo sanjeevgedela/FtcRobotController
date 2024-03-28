@@ -15,14 +15,14 @@ public class TeleOpTest4 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        equip.CamInit(hardwareMap);
+        //equip.CamInit(hardwareMap);
         PixelPipeline pipe = new PixelPipeline(telemetry);
         TeleopCommands commands = new TeleopCommands(equip);
-        commands.init(new SampleMecanumDrive(hardwareMap), hardwareMap, Equipment.Mode.TELEOP);
+        //commands.init(new SampleMecanumDrive(hardwareMap), hardwareMap, Equipment.Mode.TELEOP);
 
         while(opModeInInit()){
-            FtcDashboard.getInstance().startCameraStream(equip.webcam, 120);
-            equip.camera(pipe);
+            //FtcDashboard.getInstance().startCameraStream(equip.webcam, 120);
+            //equip.camera(pipe);
         }
 
         waitForStart();

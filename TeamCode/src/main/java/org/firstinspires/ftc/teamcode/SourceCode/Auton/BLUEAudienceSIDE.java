@@ -522,10 +522,6 @@ public class BLUEAudienceSIDE extends LinearOpMode {
                             break;
                     }
                 }
-
-
-
-
                 PoseStorage.currentPose = drive.getPoseEstimate();
         }
     }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.SourceCode.TeleOp.TeleOpTest2;
+import org.firstinspires.ftc.teamcode.util.PersonalPID;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -31,22 +32,30 @@ public class Equipment {
     public Servo rotateClaw = null;
     public Servo plane = null;
 
-    //Define camera
-    public OpenCvCamera webcam = null;
+    //Set up PIDF controller
+    public PersonalPID controller;
+    public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;
+    public static int target;
+    double pid = 0;
+
+    public void PIDinit(){
+        controller = new PersonalPID(p, i, d, f);
+    }
 
     public enum Mode{
         TELEOP,
         AUTON
     }
 
-    public void CamInit(HardwareMap hardwareMap){
+    public void CamInit(HardwareMap hardwareMap, OpenCvCamera webcam){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
+        OpenCvCamera finalWebcam = webcam;
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                finalWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -56,9 +65,9 @@ public class Equipment {
         });
     }
 
-    public void camera(OpenCvPipeline pipeline){
-        webcam.setPipeline(pipeline);
-    }
+//    public void camera(OpenCvPipeline pipeline){
+//        webcam.setPipeline(pipeline);
+//    }
 
     public void clawMap(HardwareMap hardwareMap) {
         //Define All servos
@@ -69,9 +78,10 @@ public class Equipment {
 
     public void clawInit() {
         //Set Ranges
-        rightClaw.scaleRange(0.1, 0.4);
-        leftClaw.scaleRange(0, 0.4);
+        leftClaw.scaleRange(0.55, 1);
+        rightClaw.scaleRange(0.175, 0.4);
         rotateClaw.scaleRange(0.65, 1);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
     public void planeMap(HardwareMap hardwareMap) {
@@ -149,14 +159,15 @@ public class Equipment {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void initialize(Mode type, HardwareMap hardwareMap){
+    public void initialize(Mode type, HardwareMap hardwareMap, OpenCvCamera webcam){
         switch(type){
             case AUTON:
                 slideMap(hardwareMap);
                 slideInit();
                 clawMap(hardwareMap);
                 clawInit();
-                CamInit(hardwareMap);
+                CamInit(hardwareMap, webcam);
+                PIDinit();
                 break;
 
             case TELEOP:
@@ -166,7 +177,7 @@ public class Equipment {
                 clawInit();
                 driveMap(hardwareMap);
                 driveInit();
-                CamInit(hardwareMap);
+                CamInit(hardwareMap, webcam);
                 planeMap(hardwareMap);
                 planeInit();
                 break;

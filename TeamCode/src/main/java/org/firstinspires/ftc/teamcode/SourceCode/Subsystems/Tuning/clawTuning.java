@@ -14,7 +14,7 @@ public class clawTuning extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-            equip.initialize(Equipment.Mode.TELEOP, hardwareMap);
+            //equip.initialize(Equipment.Mode.TELEOP, hardwareMap);
 
             waitForStart();
 

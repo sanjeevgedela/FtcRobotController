@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.SourceCode.Subsystems.Pipelines.PixelPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class TeleopCommands {
@@ -122,9 +123,9 @@ public class TeleopCommands {
         drivebase.align(drive, t, gamepad1, x);
     }
 
-    public void init(SampleMecanumDrive drive, HardwareMap hardwareMap, Equipment.Mode mode){
+    public void init(SampleMecanumDrive drive, HardwareMap hardwareMap, Equipment.Mode mode, OpenCvCamera camera){
         drivebase.driveInit(drive);
-        equip.initialize(mode, hardwareMap);
+        equip.initialize(mode, hardwareMap, camera);
         drivebase = new TeleopDrive(equip);
     }
 

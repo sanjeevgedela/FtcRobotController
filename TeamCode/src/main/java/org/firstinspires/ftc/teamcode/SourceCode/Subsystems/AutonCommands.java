@@ -2,18 +2,33 @@ package org.firstinspires.ftc.teamcode.SourceCode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.PersonalPID;
+
 public class AutonCommands {
-    Equipment equip = new Equipment();
+    Equipment equip;
+
+    public AutonCommands(Equipment e) {equip = e;}
+
+    public void pidUPDATE(){
+        equip.controller.setPIDF(equip.p, equip.i, equip.d, equip.f);
+        int armPos = equip.rightSlide.getCurrentPosition();
+        equip.pid = equip.controller.calculate(armPos, equip.target);
+        liftControl(equip.pid);
+    }
 
     public void slideMovement(double power, int encPos) {
         equip.rightSlide.setTargetPosition(encPos);
         equip.rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        equip.leftSlide.setTargetPosition(encPos);
+        equip.leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftControl(power);
     }
 
 
     public void liftControl(double power) {
         equip.rightSlide.setPower(power);
+        equip.leftSlide.setPower(power);
     }
 
     public void reset() {
@@ -36,12 +51,17 @@ public class AutonCommands {
     }
 
     public void scorePositionLow() {
-        slideMovement(1, 175);
+        slideMovement(1, 600);
         rotateControl(1);
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 400);
+        slideMovement(1, 900);
+        rotateControl(1);
+    }
+
+    public void scorePositionHigh() {
+        slideMovement(1, 1400);
         rotateControl(1);
     }
 }

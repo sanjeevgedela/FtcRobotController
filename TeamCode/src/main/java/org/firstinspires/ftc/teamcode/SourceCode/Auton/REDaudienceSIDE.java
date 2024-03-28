@@ -151,8 +151,6 @@ public class REDaudienceSIDE extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);
 
-        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
-//        tag = new apriltag(webcam1);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -166,6 +164,10 @@ public class REDaudienceSIDE extends LinearOpMode {
 
             }
         });
+
+        //webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        tag = new apriltag(); //new apriltag(webcam1);
+        tag.initAprilTag(visionPortal, hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -505,7 +507,6 @@ public class REDaudienceSIDE extends LinearOpMode {
         waitForStart();
         if (opModeIsActive() && !isStopRequested()) {
 //        sleep(500);
-//        tag.initAprilTag(visionPortal, hardwareMap);
 //        sleep(100);
         RedPipe12.Location12 detectedColor = pipeline.getLocation();
         //setManualExposure(6, 250);  // Use low exposure time to reduce motion blur

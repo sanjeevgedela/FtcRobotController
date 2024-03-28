@@ -66,8 +66,8 @@ public class DriveConstants {
      * inches.
      */
 
-    public static double MAX_VEL = 70;
-    public static double MAX_ACCEL = 70;
+    public static double MAX_VEL = 65;
+    public static double MAX_ACCEL = 65;
     public static double MAX_ANG_VEL = 4.2; //5.05
     //3.2925294280618123
     //5.029296243443937
