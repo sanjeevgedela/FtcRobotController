@@ -51,7 +51,7 @@ public class TestStackAlign extends LinearOpMode {
     public PersonalPID controller;
 
     public HuskyStackDetection detect;
-    int dist = 0;
+    double dist = 0;
     private HuskyLens huskyLens;
 
     public static double p = 0.007, i = 0, d = 0.0001, f = 0.001;

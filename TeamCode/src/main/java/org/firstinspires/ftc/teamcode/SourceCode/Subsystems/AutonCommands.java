@@ -39,6 +39,7 @@ public class AutonCommands {
 
     public void reset2(){
         equip.rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        equip.leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void rotateControl(double rotate) {
@@ -56,12 +57,17 @@ public class AutonCommands {
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 900);
+        slideMovement(1, 1000);
+        rotateControl(1);
+    }
+
+    public void scorePositionMidv2() {
+        slideMovement(1, 1250);
         rotateControl(1);
     }
 
     public void scorePositionHigh() {
-        slideMovement(1, 1400);
+        slideMovement(1, 1550);
         rotateControl(1);
     }
 }

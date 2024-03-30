@@ -297,7 +297,7 @@ public class REDbackdrop extends LinearOpMode {
         }
     }
     public static class RedPipe0 extends OpenCvPipeline {
-        Telemetry telemetry;
+        public Telemetry telemetry;
         Mat mat = new Mat();
 
         public enum Location0{

@@ -17,7 +17,7 @@ public class HuskyStackDetection {
     double area = 0;
     double max = 0;
 
-    int dist;
+    double dist = 0;
 
     Deadline rateLimit;
 
@@ -37,7 +37,7 @@ public class HuskyStackDetection {
         telemetry.update();
     }
 
-    public int method(){
+    public double method(){
 //        if(huskyLens.knock()) {
 //            while (huskyLens.knock()) {
 //                if (!rateLimit.hasExpired()) {
@@ -71,7 +71,8 @@ public class HuskyStackDetection {
                     if(area > max){
                         max = area;
                     }
-                    dist = (blocks[i].x - 220)/ 35;
+                    double temp = blocks[i].x - 217;
+                    dist = temp / 15;
 
                 } else {
                     telemetry.addData("Stack detected?", "No");
@@ -81,7 +82,6 @@ public class HuskyStackDetection {
         }
         telemetry.addData("distance in x", dist);
 //
-        telemetry.update();
         return dist;
     }
 

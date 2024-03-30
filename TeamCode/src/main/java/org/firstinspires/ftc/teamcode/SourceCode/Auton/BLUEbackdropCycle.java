@@ -43,7 +43,7 @@ public class BLUEbackdropCycle extends LinearOpMode {
     public DcMotorEx rightSlide;
 
     public HuskyStackDetection detect;
-    int dist = 0;
+    double dist = 0;
     private HuskyLens huskyLens;
 
     public OpenCvCamera webcam;

@@ -42,7 +42,7 @@ public class REDaudienceSTACK extends LinearOpMode {
     public DcMotorEx rightSlide;
     public OpenCvCamera webcam;
     public HuskyStackDetection detect;
-    int dist = 0;
+    double dist = 0;
     private HuskyLens huskyLens;
     private VisionPortal visionPortal;
 //    apriltag tag;

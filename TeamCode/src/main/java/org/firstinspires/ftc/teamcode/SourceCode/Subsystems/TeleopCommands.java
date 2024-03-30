@@ -125,7 +125,7 @@ public class TeleopCommands {
 
     public void init(SampleMecanumDrive drive, HardwareMap hardwareMap, Equipment.Mode mode, OpenCvCamera camera){
         drivebase.driveInit(drive);
-        equip.initialize(mode, hardwareMap, camera);
+        equip.initialize(mode, hardwareMap);
         drivebase = new TeleopDrive(equip);
     }
 

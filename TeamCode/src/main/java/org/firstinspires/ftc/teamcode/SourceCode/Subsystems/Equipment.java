@@ -78,9 +78,9 @@ public class Equipment {
 
     public void clawInit() {
         //Set Ranges
-        leftClaw.scaleRange(0.55, 1);
-        rightClaw.scaleRange(0.175, 0.4);
-        rotateClaw.scaleRange(0.65, 1);
+        leftClaw.scaleRange(0.52, 1);
+        rightClaw.scaleRange(0.15, 0.4);
+        rotateClaw.scaleRange(0.7, 1);
         leftClaw.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -159,14 +159,13 @@ public class Equipment {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void initialize(Mode type, HardwareMap hardwareMap, OpenCvCamera webcam){
+    public void initialize(Mode type, HardwareMap hardwareMap){
         switch(type){
             case AUTON:
                 slideMap(hardwareMap);
                 slideInit();
                 clawMap(hardwareMap);
                 clawInit();
-                CamInit(hardwareMap, webcam);
                 PIDinit();
                 break;
 
@@ -177,7 +176,6 @@ public class Equipment {
                 clawInit();
                 driveMap(hardwareMap);
                 driveInit();
-                CamInit(hardwareMap, webcam);
                 planeMap(hardwareMap);
                 planeInit();
                 break;

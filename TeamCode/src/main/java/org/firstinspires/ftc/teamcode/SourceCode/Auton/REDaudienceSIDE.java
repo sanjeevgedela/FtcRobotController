@@ -167,8 +167,12 @@ public class REDaudienceSIDE extends LinearOpMode {
 
         //webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
         tag = new apriltag(); //new apriltag(webcam1);
-        tag.initAprilTag(visionPortal, hardwareMap);
-
+        try {
+            tag.initAprilTag(visionPortal, hardwareMap);
+        }
+        catch(Exception e){
+            telemetry.addData("errormsg", e.getMessage());
+        }
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
