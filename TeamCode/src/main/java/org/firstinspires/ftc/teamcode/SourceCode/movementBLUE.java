@@ -154,7 +154,7 @@ public class movementBLUE extends LinearOpMode {
                     commands.clawControl(0, 0);
                     commands.slideMovement(1,215);
                 })
-                .splineToSplineHeading(new Pose2d(32.7, 34, Math.toRadians(180)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(10, 33.6, Math.toRadians(180)))
 //                    .splineToConstantHeading(new Vector2d(14, -36), Math.toRadians(0))
 //                    .splineToSplineHeading(new Pose2d(6, -29.6, Math.toRadians(180)), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -164,7 +164,7 @@ public class movementBLUE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionLow();
                 })
-                .splineToSplineHeading(new Pose2d(51.4, 42.2, Math.toRadians(0)), Math.toRadians(-90))
+                .lineToLinearHeading(new Pose2d(51.4, 29.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,1);
                 })
@@ -186,10 +186,10 @@ public class movementBLUE extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
-                    commands.slideMovement(1,285);
+                    commands.slideMovement(1,270);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-45, 21), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-48, 18), Math.toRadians(180))
                 //
                 .build();
 
@@ -231,10 +231,11 @@ public class movementBLUE extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
-                    commands.slideMovement(1,285);
+                    commands.slideMovement(1,260);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-45, 21), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-48, 18), Math.toRadians(180))
+                .waitSeconds(10)
                 //
                 .build();
 
@@ -246,7 +247,7 @@ public class movementBLUE extends LinearOpMode {
                 })
 //                .splineToSplineHeading(new Pose2d(32.7, -34, Math.toRadians(180)), Math.toRadians(0))
 //                .splineToConstantHeading(new Vector2d(14, -36), Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(11, 33.6, Math.toRadians(180)))
+                .splineToSplineHeading(new Pose2d(32.7, 34, Math.toRadians(180)), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(0,1);
                 })
@@ -254,7 +255,7 @@ public class movementBLUE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(51.4, 29.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(51.4, 42.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,1);
                 })
@@ -276,10 +277,10 @@ public class movementBLUE extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
-                    commands.slideMovement(1,285);
+                    commands.slideMovement(1,270);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-45, 21), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-48, 18), Math.toRadians(180))
                 //
                 .build();
 
@@ -304,9 +305,10 @@ public class movementBLUE extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.slideMovement(1,145);
+                    commands.slideMovement(1,130);
                 })
-                .splineToConstantHeading(new Vector2d(-45, 17), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-48, 22), Math.toRadians(210))
+                .waitSeconds(10)
                 //.addDisplacementMarker(() -> drive.followTrajectorySequenceAsync(part2))
                 .build();
 
@@ -357,7 +359,7 @@ public class movementBLUE extends LinearOpMode {
 //                .waitSeconds(.5)
 //                .strafeRight(-.001 - stackDist)
 //                .waitSeconds(.1)
-                    .forward(15,
+                    .forward(12,
                             SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-60, -15 + stackDist), Math.toRadians(180),
@@ -415,7 +417,7 @@ public class movementBLUE extends LinearOpMode {
 //                .waitSeconds(.5)
 //                .strafeRight(-.001 - stackDist)
 //                .waitSeconds(.1)
-                    .forward(17.5,
+                    .forward(12,
                             SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-60, -17 + stackDist), Math.toRadians(180),
@@ -444,7 +446,7 @@ public class movementBLUE extends LinearOpMode {
                         commands.scorePositionMidv2();
                     })
                     .splineToConstantHeading(new Vector2d(45.4, 34 + tagDist), Math.toRadians(0))
-                    .forward(5)
+                    .forward(5.5)
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.clawControl(1,0);
                     })
