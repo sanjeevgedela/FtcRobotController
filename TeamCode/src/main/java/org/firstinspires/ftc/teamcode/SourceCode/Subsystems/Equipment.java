@@ -79,7 +79,7 @@ public class Equipment {
     public void clawInit() {
         //Set Ranges
         leftClaw.scaleRange(0.52, 1);
-        rightClaw.scaleRange(0.15, 0.4);
+        rightClaw.scaleRange(0.17, 0.4);
         rotateClaw.scaleRange(0.7, 1);
         leftClaw.setDirection(Servo.Direction.REVERSE);
     }
