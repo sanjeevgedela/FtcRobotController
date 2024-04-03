@@ -223,7 +223,7 @@ public class movementBLUE extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.reset2();
-                })
+                })//
                 //.waitSeconds(0.5)
                 .forward(63,
                         SampleMecanumDrive.getVelocityConstraint(63, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -307,7 +307,7 @@ public class movementBLUE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.slideMovement(1,130);
                 })
-                .splineToConstantHeading(new Vector2d(-48, 22), Math.toRadians(210))
+                .splineToConstantHeading(new Vector2d(-48, 22), Math.toRadians(180))
                 .waitSeconds(10)
                 //.addDisplacementMarker(() -> drive.followTrajectorySequenceAsync(part2))
                 .build();
