@@ -255,7 +255,7 @@ public class movementBLUE extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(51.4, 42.2, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(49.4, 42.2, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,1);
                 })
@@ -280,7 +280,7 @@ public class movementBLUE extends LinearOpMode {
                     commands.slideMovement(1,270);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-48, 18), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-48, 16), Math.toRadians(180))
                 //
                 .build();
 
