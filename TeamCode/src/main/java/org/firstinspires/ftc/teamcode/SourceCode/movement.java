@@ -172,7 +172,7 @@ public class movement extends LinearOpMode {
                     .UNSTABLE_addTemporalMarkerOffset(.6, () -> {
                         commands.reset();
                     })
-                    .splineToSplineHeading(new Pose2d(25,-13, Math.toRadians(180)), Math.toRadians(180),
+                    .splineToSplineHeading(new Pose2d(25,-14, Math.toRadians(180)), Math.toRadians(180),
                             SampleMecanumDrive.getVelocityConstraint(55, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -185,10 +185,10 @@ public class movement extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.clawControl(1,0);
-                        commands.slideMovement(1,265);
+                        commands.slideMovement(1,215);
                         commands.rotateControl(0);
                     })
-                    .splineToConstantHeading(new Vector2d(-45, -15), Math.toRadians(180))
+                    .splineToConstantHeading(new Vector2d(-45, -14), Math.toRadians(180))
                     //
                     .build();
 
@@ -217,7 +217,7 @@ public class movement extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.6, () -> {
                     commands.reset();
                 })
-                .splineToSplineHeading(new Pose2d(25,-13, Math.toRadians(180)), Math.toRadians(180),
+                .splineToSplineHeading(new Pose2d(25,-14, Math.toRadians(180)), Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(55, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -230,10 +230,10 @@ public class movement extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
-                    commands.slideMovement(1,265);
+                    commands.slideMovement(1,215);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-45, -15), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-45, -14), Math.toRadians(180))
                 //
                 .build();
 
@@ -253,16 +253,16 @@ public class movement extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionLow();
                 })
-                .lineToLinearHeading(new Pose2d(51.4, -28.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(50, -28.6, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.clawControl(1,1);
+                    commands.clawControl(1,0);
                 })
                 .waitSeconds(0.3)
                 .back(5)
                 .UNSTABLE_addTemporalMarkerOffset(.6, () -> {
                     commands.reset();
                 })
-                .splineToSplineHeading(new Pose2d(25,-13, Math.toRadians(180)), Math.toRadians(180),
+                .splineToSplineHeading(new Pose2d(25,-14, Math.toRadians(180)), Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(55, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -275,11 +275,10 @@ public class movement extends LinearOpMode {
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
-                    commands.slideMovement(1,265);
+                    commands.slideMovement(1,215);
                     commands.rotateControl(0);
                 })
-                .splineToConstantHeading(new Vector2d(-45, -11), Math.toRadians(180))
-                //
+                .splineToConstantHeading(new Vector2d(-45, -14), Math.toRadians(180))
                 .build();
 
             TrajectorySequence toStack = drive.trajectorySequenceBuilder(new Pose2d(46.4, -33, Math.toRadians(0)))
@@ -289,7 +288,7 @@ public class movement extends LinearOpMode {
                     .back(2.5,
         SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                    .splineToSplineHeading(new Pose2d(25,-13, Math.toRadians(180)), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(25,-14, Math.toRadians(180)), Math.toRadians(180))
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.reset2();
                     })
@@ -303,9 +302,9 @@ public class movement extends LinearOpMode {
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                        commands.slideMovement(1,130);
+                        commands.slideMovement(1,110);
                     })
-                    .splineToConstantHeading(new Vector2d(-45, -15), Math.toRadians(155))
+                    .splineToConstantHeading(new Vector2d(-45, -14), Math.toRadians(155))
                     //.addDisplacementMarker(() -> drive.followTrajectorySequenceAsync(part2))
                     .build();
 
@@ -358,7 +357,7 @@ public class movement extends LinearOpMode {
 //                .waitSeconds(.5)
 //                .strafeRight(-.001 - stackDist)
 //                .waitSeconds(.1)
-                    .forward(15.6,
+                    .forward(17,
                             SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-60, -15 + stackDist), Math.toRadians(180),
@@ -386,8 +385,8 @@ public class movement extends LinearOpMode {
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.scorePositionMidv2();
                     })
-                    .splineToConstantHeading(new Vector2d(45, -34 + tagDist), Math.toRadians(0))
-                    .forward(5.3)
+                    .splineToConstantHeading(new Vector2d(45, -34), Math.toRadians(0))
+                    .forward(5)
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.clawControl(1,0);
                         commands.rotateControl(.75);
@@ -420,7 +419,7 @@ public class movement extends LinearOpMode {
 //                .waitSeconds(.5)
 //                .strafeRight(-.001 - stackDist)
 //                .waitSeconds(.1)
-                    .forward(15.75,
+                    .forward(18,
                             SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                    .splineToConstantHeading(new Vector2d(-60, -17 + stackDist), Math.toRadians(180),
@@ -448,8 +447,8 @@ public class movement extends LinearOpMode {
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.scorePositionMidv2();
                     })
-                    .splineToConstantHeading(new Vector2d(44.8, -34 + tagDist), Math.toRadians(0))
-                    .forward(5.2)
+                    .splineToConstantHeading(new Vector2d(44.8, -36), Math.toRadians(0))
+                    .forward(5)
                     .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                         commands.clawControl(1,0);
                     })

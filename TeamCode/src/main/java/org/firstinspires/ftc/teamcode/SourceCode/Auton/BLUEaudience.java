@@ -197,7 +197,7 @@ public class BLUEaudience extends LinearOpMode {
                 //.waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     commands.rotateControl(0);
-                    commands.slideMovement(1, 350);
+                    commands.slideMovement(1, 340);
                 })
                 .lineToLinearHeading(new Pose2d(-42, -14, Math.toRadians(180)))
                 .forward(20,
@@ -328,7 +328,7 @@ public class BLUEaudience extends LinearOpMode {
                 })
                 .splineToConstantHeading(new Vector2d(10,13), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.scorePositionMid();
+                    commands.scorePositionMidv2();
                 })
                 .splineToConstantHeading(new Vector2d(45.5, 25), Math.toRadians(0))
                 .forward(4.3)

@@ -57,17 +57,17 @@ public class AutonCommands {
     }
 
     public void scorePositionMid() {
-        slideMovement(1, 1000);
+        slideMovement(1, 950);
         rotateControl(1);
     }
 
     public void scorePositionMidv2() {
-        slideMovement(1, 1350);
+        slideMovement(1, 1470);
         rotateControl(1);
     }
 
     public void scorePositionHigh() {
-        slideMovement(1, 1750);
+        slideMovement(1, 1850);
         rotateControl(1);
     }
 }
