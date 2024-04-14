@@ -100,7 +100,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     commands.rotateControl(0);
                     commands.clawControl(0, 0);
-                    commands.slideMovement(1, 295);
+                    commands.slideMovement(1, 250);
                 })
                 .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(-37, -40, Math.toRadians(0)))
@@ -148,7 +148,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     commands.rotateControl(0);
                     commands.clawControl(0, 0);
-                    commands.slideMovement(1, 270);
+                    commands.slideMovement(1, 250);
                 })
                 .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(-40, -12, Math.toRadians(270)))
@@ -196,7 +196,7 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.1, () -> {
                     commands.rotateControl(0);
                     commands.clawControl(0, 0);
-                    commands.slideMovement(1, 275);
+                    commands.slideMovement(1, 250);
                 })
                 .waitSeconds(1)
                 .lineToLinearHeading(new Pose2d(-37.5, -35.35, Math.toRadians(180)))
