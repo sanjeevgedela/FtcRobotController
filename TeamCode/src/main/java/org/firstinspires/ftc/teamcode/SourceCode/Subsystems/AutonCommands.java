@@ -62,12 +62,12 @@ public class AutonCommands {
     }
 
     public void scorePositionMidv2() {
-        slideMovement(1, 1470);
+        slideMovement(1, 1570);
         rotateControl(1);
     }
 
     public void scorePositionHigh() {
-        slideMovement(1, 1850);
+        slideMovement(1, 2050);
         rotateControl(1);
     }
 }

@@ -110,7 +110,7 @@ public class REDaudience extends LinearOpMode {
                 //.waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     commands.rotateControl(0);
-                    commands.slideMovement(1, 310);
+                    commands.slideMovement(1, 285);
                 })
                 .lineToLinearHeading(new Pose2d(-42, -9, Math.toRadians(180)))
                 .forward(18,
@@ -136,12 +136,13 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionMid();
                 })
-                .splineToConstantHeading(new Vector2d(45.5, -41), Math.toRadians(0))
-                .forward(5.6)
+                .splineToConstantHeading(new Vector2d(45.5, -39), Math.toRadians(0))
+                .forward(6.6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.clawControl(.5,.5);
+                    commands.clawControl(.8,.5);
                 })
                 .waitSeconds(1)
+                .back(5)
                 .build();
 
         TrajectorySequence middle = drive.trajectorySequenceBuilder(startPose)
@@ -158,7 +159,7 @@ public class REDaudience extends LinearOpMode {
                 //.waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     commands.rotateControl(0);
-                    commands.slideMovement(1, 310);
+                    commands.slideMovement(1, 285);
                 })
                 .lineToLinearHeading(new Pose2d(-42, -11, Math.toRadians(180)))
                 .forward(19,
@@ -184,12 +185,13 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionMid();
                 })
-                .splineToConstantHeading(new Vector2d(45.5, -26), Math.toRadians(0))
-                .forward(5)
+                .splineToConstantHeading(new Vector2d(45.5, -24), Math.toRadians(0))
+                .forward(6.4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.clawControl(.5,.5);
+                    commands.clawControl(.8,.5);
                 })
                 .waitSeconds(1)
+                .back(5)
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
@@ -206,10 +208,10 @@ public class REDaudience extends LinearOpMode {
                 //.waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(.3, () -> {
                     commands.rotateControl(0);
-                    commands.slideMovement(1, 310);
+                    commands.slideMovement(1, 285);
                 })
                 .lineToLinearHeading(new Pose2d(-42, -15, Math.toRadians(180)))
-                .forward(18,
+                .forward(19.5,
                         SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -232,12 +234,13 @@ public class REDaudience extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.scorePositionMid();
                 })
-                .splineToConstantHeading(new Vector2d(45.5, -20), Math.toRadians(0))
-                .forward(5)
+                .splineToConstantHeading(new Vector2d(45.5, -19.5), Math.toRadians(0))
+                .forward(6)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.clawControl(.5,.5);
+                    commands.clawControl(.8,.5);
                 })
                 .waitSeconds(1)
+                .back(4)
                 .build();
 
 
@@ -251,7 +254,7 @@ public class REDaudience extends LinearOpMode {
                     commands.reset();
                 })
                 .back(2.5)
-                .splineToSplineHeading(new Pose2d(25,-12, Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(25,-10, Math.toRadians(180)), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.reset2();
                 })
@@ -263,9 +266,9 @@ public class REDaudience extends LinearOpMode {
                 .forward(63)
 //                    .splineToConstantHeading(new Vector2d(-28, -13), Math.toRadians(180))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.slideMovement(1,135);
+                    commands.slideMovement(1,170);
                 })
-                .splineToConstantHeading(new Vector2d(-45, -12), Math.toRadians(185))
+                .splineToConstantHeading(new Vector2d(-45, -12), Math.toRadians(174))
                 //.addDisplacementMarker(() -> drive.followTrajectorySequenceAsync(part2))
                 .build();
 
@@ -314,19 +317,19 @@ public class REDaudience extends LinearOpMode {
 //                    .forward(15,
 //                            SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
 //                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .forward(17,
+                .forward(16.4,
                         SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
-                    commands.slideMovement(1, 200);
+                    commands.slideMovement(1, 143);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(.2, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.35, () -> {
                     commands.clawControl(0,0);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(.4, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(.6, () -> {
                     commands.rotateControl(1);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.8)
                 //.forward(16)
                 .back(4)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
@@ -342,7 +345,7 @@ public class REDaudience extends LinearOpMode {
                     commands.scorePositionMid();
                 })
                 .splineToConstantHeading(new Vector2d(45.5, -32.5), Math.toRadians(0))
-                .forward(5)
+                .forward(8)
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     commands.clawControl(1,0);
                 })
@@ -351,6 +354,9 @@ public class REDaudience extends LinearOpMode {
                 })
                 .waitSeconds(1)
                 .back(2)
+                .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
+                    commands.reset();
+                })
                 .turn(Math.toRadians(180))
                 //score
                 .build();

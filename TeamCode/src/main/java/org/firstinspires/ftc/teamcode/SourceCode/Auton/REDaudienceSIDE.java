@@ -166,13 +166,6 @@ public class REDaudienceSIDE extends LinearOpMode {
         });
 
         //webcam1 = hardwareMap.get(WebcamName.class, "Webcam 2");
-        tag = new apriltag(); //new apriltag(webcam1);
-        try {
-            tag.initAprilTag(visionPortal, hardwareMap);
-        }
-        catch(Exception e){
-            telemetry.addData("errormsg", e.getMessage());
-        }
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
@@ -417,7 +410,7 @@ public class REDaudienceSIDE extends LinearOpMode {
                 //}
 //                })
                 .waitSeconds(.5)
-                .lineToLinearHeading(new Pose2d(48, -30 + distance, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(49, -30 + distance, Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
                     telemetry.addData("distance", distance);

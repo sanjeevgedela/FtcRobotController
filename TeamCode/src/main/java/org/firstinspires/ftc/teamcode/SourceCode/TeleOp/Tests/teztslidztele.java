@@ -210,7 +210,7 @@ public class teztslidztele extends LinearOpMode {
         if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() < 0.5){
             rightClaw.setPosition(1);
         } else if (gamepad2.left_trigger > 0 && rotateClaw.getPosition() > 0.5) {
-            rightClaw.setPosition(0.4);
+            rightClaw.setPosition(0.5);
         } else {
             rightClaw.setPosition(0);
         }
@@ -382,7 +382,7 @@ public class teztslidztele extends LinearOpMode {
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
         leftClaw.scaleRange(0.55, 1);
-        rightClaw.scaleRange(0.15, 0.4);
+        rightClaw.scaleRange(0.15, 0.5);
         rotateClaw.scaleRange(0.7, 1);
 
         drive.setPoseEstimate(PoseStorage.currentPose);

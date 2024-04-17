@@ -383,7 +383,7 @@ public class BLUEAudienceSIDE extends LinearOpMode {
 //                    dist = tag.calculate();
 //                })
                 .waitSeconds(.5)
-                .lineToLinearHeading(new Pose2d(66, 51 + dist, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(66, 52 + dist, Math.toRadians(0)))
                 //initial drop
                 .UNSTABLE_addTemporalMarkerOffset(.01, () -> {
                     clawControl(1, 0);
